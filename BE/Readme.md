@@ -1,3 +1,4 @@
-Tạo một service mới:
-    cd QLVRHV
-    python3 ../manage.py startapp serviceName
+
+Tạo một service mới:<br>
+    cd QLVRHV<br>
+    python3 ../manage.py startapp serviceName<br>
