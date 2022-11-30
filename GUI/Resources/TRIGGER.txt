@@ -1,0 +1,34 @@
+﻿
+----Giam so luong vaccine co san sau khi tao chitiettiem
+CREATE TRIGGER trg_TaoChiTietTiem ON dbo.CHITIETTIEM AFTER INSERT AS 
+BEGIN 
+	DECLARE @DaSuDung FLOAT
+	SET @DaSuDung = (
+		SELECT Inserted.LIEULUONG
+		FROM Inserted
+	)
+
+	SET @DaSuDung = ROUND(@DaSuDung, 0) --lam tron len
+
+	UPDATE dbo.VACCINE 
+	SET SOLUONGCOSAN = SOLUONGCOSAN - @DaSuDung
+	FROM Inserted INNER JOIN dbo.VACCINE vc ON vc.MAVACCINE = Inserted.MAVACCINE
+	WHERE vc.MAVACCINE = Inserted.MAVACCINE
+END
+
+--GO	
+
+
+
+----Xoa hoa don va cac chi tiet tiem cua phieu tiem truoc khi xoa phieu tiem
+CREATE TRIGGER trg_xoaPT ON dbo.PHIEUTIEM INSTEAD OF DELETE AS
+BEGIN
+	DECLARE @deletedMAPT CHAR(10)
+	SET @deletedMAPT = (SELECT MAPHIEUTIEM FROM Deleted)
+
+    DELETE FROM dbo.HOADON WHERE MAPHIEUTIEM = @deletedMAPT
+	DELETE FROM dbo.CHITIETTIEM WHERE MAPHIEUTIEM = @deletedMAPT
+
+	DELETE FROM dbo.PHIEUTIEM WHERE MAPHIEUTIEM = @deletedMAPT
+END
+
