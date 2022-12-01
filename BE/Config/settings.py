@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
-    'QLVRHV.users.apps.UsersConfig'
+    'QLVRHV.Account.apps.UsersConfig'
 ]
-AUTH_USER_MODEL= 'users.User'
+AUTH_USER_MODEL= 'Account.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
