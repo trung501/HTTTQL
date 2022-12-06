@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
-    'QLVRHV.Account.apps.UsersConfig'
+    'QLVRHV.Account.apps.UsersConfig',
+    'QLVRHV.Address.apps.AddressConfig'
 ]
 AUTH_USER_MODEL= 'Account.User'
 
