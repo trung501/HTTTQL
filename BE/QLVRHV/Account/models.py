@@ -7,6 +7,7 @@ class User(AbstractUser):
     password= models.CharField(max_length=255)
     personID= models.CharField(max_length=20, blank=True, null=True)
     roleID = models.IntegerField(blank=True,default=NO_ROLE, null=True)
+    userSetRole = models.CharField(max_length=255,blank=True,null=True)
 
     USERNAME_FIELD= 'username'
     REQUIRED_FIELDS=[]
