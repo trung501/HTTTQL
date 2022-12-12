@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from Common import generics_cursor
-from Common.generics import NO_ROLE
+from Common.generics import NO_ROLE,GUARDSMAN_ROLE
 class CustomPermissions(permissions.BasePermission):
     def __init__(self):
         super().__init__()
@@ -13,6 +13,8 @@ class CustomPermissions(permissions.BasePermission):
     def get_allowed_methods(self, CODE_VIEW):
         if int(CODE_VIEW) > NO_ROLE: # role admin
             return ['GET','POST','PUT','DELETE']
+        elif int(CODE_VIEW) == GUARDSMAN_ROLE:
+            return ['GET']
         else:
             return []
     

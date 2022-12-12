@@ -23,6 +23,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
+        token['permission'] = user.roleID
         return token
 
 class ChangePasswordSerializer(serializers.Serializer):
