@@ -16,11 +16,12 @@ def dictfetchall(cursor):
 def getDictFromQuery(query_String:str,param:list,page:str=None,size:str=None):  
     with connection.cursor() as cursor:
         if page is not None:
-            query_String=query_String+" OFFSET %s  ROWS FETCH NEXT %s ROWS ONLY"
+            query_String=query_String+"LIMIT %s OFFSET %s"
             if size is not None:
-                param =param + [(int(page)-1)*int(size),int(size)]
+                param =param + [int(size),(int(page)-1)*int(size)]
             else:
-                param =param + [int(page)*pagination.PageNumberPagination.page_size,pagination.PageNumberPagination.page_size]           
+                param =param + [pagination.PageNumberPagination.page_size,int(page)*pagination.PageNumberPagination.page_size]    
+        print(query_String)       
         cursor.execute(query_String,param)
         obj = dictfetchall(cursor)
     return obj
@@ -29,11 +30,11 @@ def getDictFromQuery(query_String:str,param:list,page:str=None,size:str=None):
 @multimethod
 def getDictFromQuery(cursor:object,query_String:str,param:list,page:str=None,size:str=None):
     if page is not None:
-        query_String=query_String+" OFFSET %s  ROWS FETCH NEXT %s ROWS ONLY"
+        query_String=query_String+"LIMIT %s OFFSET %s"
         if size is not None:
-            param =param + [(int(page)-1)*int(size),int(size)]
+            param =param + [int(size),(int(page)-1)*int(size)]
         else:
-            param =param + [int(page)*pagination.PageNumberPagination.page_size,pagination.PageNumberPagination.page_size]   
+            param =param + [pagination.PageNumberPagination.page_size,int(page)*pagination.PageNumberPagination.page_size]     
     cursor.execute(query_String,param)
     obj = dictfetchall(cursor)
     return obj

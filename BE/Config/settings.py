@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'QLVRHV.Account.apps.UsersConfig',
-    'QLVRHV.Address.apps.AddressConfig'
+    'QLVRHV.Address.apps.AddressConfig',
+    'QLVRHV.Person.apps.PersonConfig'
 ]
 AUTH_USER_MODEL= 'Account.User'
 
