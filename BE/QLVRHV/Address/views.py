@@ -43,11 +43,9 @@ class AddressViewSet(viewsets.ViewSet):
         status.HTTP_200_OK: 'JSON',
     }
 
-    @swagger_auto_schema(method='get', manual_parameters=[sw_page, sw_size,sw_DonViID], responses=get_list_don_vi_response)
+    @swagger_auto_schema(method='get', manual_parameters=[], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-list-don-vi')
-    def get_list_don_vi(self, request):
-        page = request.query_params.get('page')
-        size = request.query_params.get('size')        
+    def get_list_don_vi(self, request):       
         username= request.user.username
         roleId = request.user.roleID
         query_string="SELECT * FROM DONVI WHERE DONVIID=    \
@@ -81,7 +79,7 @@ class AddressViewSet(viewsets.ViewSet):
                     for lop in list_lop:
                         if lop['MaLop'] is not None:
                             list_don_vi[tieu_doan][dai_doi['MaDaiDoi']].append(lop['MaLop'])
-                            
+
         if roleId == GUARDSMAN_ROLE or roleId == ACADEMY_ROLE:
             output=list_don_vi
         elif roleId == BATTALION_ROLE:
@@ -92,3 +90,38 @@ class AddressViewSet(viewsets.ViewSet):
             output = address_user['MaLop'] 
         return Response(data=output, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID], responses=get_list_don_vi_response)
+    @action(methods=['GET'], detail=False, url_path='get-info-don-vi')
+    def get_info_don_vi(self, request):
+        donViID =str(request.query_params.get('donViID'))
+        try:
+            if donViID.startswith("TD"):
+                query_string="SELECT * FROM TIEUDOAN WHERE TIEUDOAN.MaTD = %s "
+            elif donViID.startswith("DD"):
+                query_string="SELECT * FROM DAIDOI WHERE DAIDOI.MaDD = %s "
+            elif donViID.startswith("L"):
+                query_string="SELECT * FROM LOP WHERE LOP.MaLop = %s "
+            obj=generics_cursor.getDictFromQuery(query_string,[donViID])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID], responses=get_list_don_vi_response)
+    @action(methods=['GET'], detail=False, url_path='get-name-don-vi')
+    def get_name_don_vi(self, request):
+        donViID =str(request.query_params.get('donViID'))
+        try:
+            if donViID.startswith("TD"):
+                query_string="SELECT MaTD code, TenTD name FROM TIEUDOAN WHERE TIEUDOAN.MaTD =  %s "
+            elif donViID.startswith("DD"):
+                query_string="SELECT MaDD code, TenDD name FROM DAIDOI WHERE DAIDOI.MaDD =  %s "
+            elif donViID.startswith("L"):
+                query_string="SELECT MALOP code, TenLop name FROM LOP WHERE LOP.MaLop =  %s "
+            obj=generics_cursor.getDictFromQuery(query_string,[donViID])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
