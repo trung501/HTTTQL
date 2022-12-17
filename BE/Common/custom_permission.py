@@ -24,13 +24,9 @@ class CustomPermissions(permissions.BasePermission):
             return False
         ## get username
         username = request.user
-        query_string = "SELECT ROLEID FROM ACCOUNT_USER WHERE USERNAME = %s"
-        param = [str(username)]
-        try:
-            obj = generics_cursor.getDictFromQuery(query_string,param)
-        
+        try:       
             ## get allowed methods by username [query to database]
-            allowed_methods = self.get_allowed_methods(obj[0].get("CODE_VIEW"))
+            allowed_methods = self.get_allowed_methods(request.user.roleID)
             # allowed_methods = self.search_allowed_methods
             ## check if request method in allowed methods
             if request.method in allowed_methods :
