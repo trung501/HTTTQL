@@ -21,7 +21,7 @@ def getDictFromQuery(query_String:str,param:list,page:str=None,size:str=None):
                 param =param + [int(size),(int(page)-1)*int(size)]
             else:
                 param =param + [pagination.PageNumberPagination.page_size,int(page)*pagination.PageNumberPagination.page_size]    
-        print(query_String)       
+        # print(query_String)       
         cursor.execute(query_String,param)
         obj = dictfetchall(cursor)
     return obj
