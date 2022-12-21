@@ -81,6 +81,9 @@ class PersonViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size,sw_DonViID], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-list-hoc-vien')
     def get_list_hoc_vien(self, request):
+        """
+        API này dùng để lấy danh sách học viên của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào.
+        """
         page =request.query_params.get('page')
         size =request.query_params.get('size')
         donViID =str(request.query_params.get('donViID'))
@@ -98,12 +101,18 @@ class PersonViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=[], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-permission')
     def get_permission(self, request):
+        """
+        API này dùng để lấy quyền truy cập ( roleID) của user hiện tại).
+        """
         roleId = request.user.roleID       
         return Response({"permission":int(roleId)}, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(method='get', manual_parameters=[sw_MaHV,sw_TimeStart], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-check-cam-trai')
     def get_check_cam_trai(self, request):
+        """
+        API này dùng để check thử xem học viên có bị cấm trại trong khoảng thời gian đăng ký ra ngoài không, tham số nhập vào là mã học viên và thời gian đăng ký ra ngoài.
+        """
         maHV =request.query_params.get('maHV')
         timeStart = request.query_params.get('timeStart')       
 
@@ -118,6 +127,9 @@ class PersonViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID,sw_TimeBetween], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-list-cam-trai-in-week')
     def get_list_cam_trai_in_week(self, request):
+        """
+        API này dùng để lấy danh sách các học viên bị cắm trại trong một đơn vị nào đó. timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên bị cấm trại từ đầu tuần đến cuối tuần nằm trong timeBetween đó.
+        """
         donViID =request.query_params.get('donViID')
         timeBetween = request.query_params.get('timeBetween')       
         page = request.query_params.get('page')       
