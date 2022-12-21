@@ -48,6 +48,12 @@ class PersonViewSet(viewsets.ViewSet):
         status.HTTP_200_OK: 'JSON',
     }
 
+    post_list_person_response = {
+        status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+        status.HTTP_304_NOT_MODIFIED: 'NOT_MODIFIED',
+        status.HTTP_200_OK: 'JSON',
+    }
+
     def CheckQuyetDinhCamTrai(self,maHV,time_go:"12-08-2022"):
         try:
             time_go = datetime.strptime(time_go, '%d-%m-%Y').date()
@@ -134,10 +140,28 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
 
-        # print(start,end)
-        # if checkCamTrai:
-        #     if len(listReason)==0:
-        #         return Response(data={"result":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        #     return Response(data={"result":False,"reason":listReason}, status=status.HTTP_200_OK)
-      
-        return Response(data={"result":True}, status=status.HTTP_200_OK)
+    # @swagger_auto_schema(method='post', manual_parameters=[sw_DonViID,sw_TimeBetween], responses=post_list_person_response)
+    # @action(methods=['POST'], detail=False, url_path='post-dang-ky-ra-ngoai')
+    # def post_dang_ky_ra_ngoai(self, request):
+    #     donViID =request.query_params.get('donViID')
+    #     timeBetween = request.query_params.get('timeBetween')       
+    #     page = request.query_params.get('page')       
+    #     size = request.query_params.get('size')       
+    #     if timeBetween is None:
+    #         timeBetween=datetime.now().strftime("%d-%m-%Y")
+    #     time_start,time_end = self.getTimeStartAndFinishWeek(timeBetween)
+    #     print(time_start,time_end)
+    #     try:
+    #         query_string=f"SELECT * FROM QUYETDINHCAMTRAI WHERE \
+    #                         ((TG_BatDau BETWEEN '{time_start}'AND '{time_end}') OR \
+    #                         (TG_KetThuc BETWEEN '{time_start}'AND '{time_end}') OR  \
+    #                         (TG_BatDau <= '{time_start}' AND TG_KetThuc >= '{time_end}'))\
+    #                         AND MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+    #                         AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))" 
+    #         obj=generics_cursor.getDictFromQuery(query_string,[donViID,donViID,donViID],page=page,size=size)
+    #         if obj is None:
+    #             return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+    #     except:
+    #         return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     return Response(data=obj, status=status.HTTP_200_OK)
+
