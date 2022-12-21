@@ -201,4 +201,30 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-dang_ky')
+    def get_list_dang_ky(self, request):
+        """
+        API này dùng để lấy danh sách các học viên đăng ký theo  đơn vị(lớp, đại đội, tiểu đoàn). timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên đăng ký từ đầu tuần đến cuối tuần nằm trong timeBetween đó.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        print(time_start, time_end)
+        try:
+            query_string = f"SELECT * FROM DSDANGKY WHERE \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
     
