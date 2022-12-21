@@ -16,136 +16,78 @@
 
 */
 import Dashboard from "views/Dashboard.js";
-import newUser from "views/newUser.js";
-import UserProfile from "views/UserProfile.js";
-import TableListAdmin from "views/TableListAdmin.js";
-import TableListUser from "views/TableListUsers";
-import Typography from "views/Typography.js";
-import Icons from "views/Icons.js";
-import Maps from "views/Maps.js";
-import Notifications from "views/Notifications.js";
-import Waiting from "views/waiting.js";
-import Accepted from "views/accepted.js";
-import Setting from "views/setting.js";
-import SignUp from "views/signup.js"
-import SignIn from "views/signin.js"
-import Result from "views/result.js"
-import Vulnerability from "views/vulnerability.js"
-import Website from "views/website.js"
+import dsdk from "views/dsdk.js";
+import dsCxd from "views/dsCxd.js";
+import dsDD from "views/dsDD.js";
+import dsKDxd from "views/dsKDxd.js";
+import qdct from "views/qdct.js";
+import dsHV from "views/dsHV.js";
+import dsRV from "views/dsRV.js";
+import dsVP from "views/dsVP.js";
+import ttk from "views/ttk.js";
+
 
 
 const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Tổng quan",
-    icon: "nc-icon nc-chart-pie-35",
     component: Dashboard,
     layout: "/admin"
   },
   {
-    path: "/user",
-    name: "newUser",
-    icon: "nc-icon nc-circle-09",
-    component: newUser,
+    path: "/dsHV",
+    name: "Danh sách học viên",
+    component: dsHV,
     layout: "/admin"
   },
   {
-    path: "/user",
-    name: "User Profile",
-    icon: "nc-icon nc-circle-09",
-    component: UserProfile,
+    path: "/dsdk",
+    name: "Danh sách đăng kí",
+    component: dsdk,
     layout: "/admin"
   },
   {
-    path: "/tableAdmin",
-    name: "List Admins",
-    icon: "nc-icon nc-notes",
-    component: TableListAdmin,
+    path: "/dsCxd",
+    name: "Danh sách chờ xét duyệt",
+    component: dsCxd,
     layout: "/admin"
   },
   {
-    path: "/tableUser",
-    name: "List Users",
-    icon: "nc-icon nc-notes",
-    component: TableListUser,
+    path: "/dsDD",
+    name: "Danh sách đã duyệt",
+    component: dsDD,
+    layout: "/admin"
+  },
+  {
+    path: "/dsKDxd",
+    name: "Danh sách không được xét duyệt",
+    component: dsKDxd,
     layout: "/admin"
   },
 
   {
-    path: "/typography",
-    name: "Typography",
-    icon: "nc-icon nc-paper-2",
-    component: Typography,
+    path: "/qdct",
+    name: "Quyết định cấm trại",
+    component: qdct,
     layout: "/admin"
   },
   {
-    path: "/icons",
-    name: "Icons",
-    icon: "nc-icon nc-atom",
-    component: Icons,
+    path: "/dsRV",
+    name: "Danh sách ra vào",
+    component: dsHV,
     layout: "/admin"
   },
   {
-    path: "/maps",
-    name: "Maps",
-    icon: "nc-icon nc-pin-3",
-    component: Maps,
+    path: "/dsVP",
+    name: "Danh sách vi phạm",
+    component: dsVP,
     layout: "/admin"
   },
   {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "nc-icon nc-bell-55",
-    component: Notifications,
-    layout: "/admin"
-  },
-  {
-    path: "/website",
-    name: "Đối tượng rà soát",
-    icon: "nc-icon nc-alien-33",
-    component: Website,
-    layout: "/admin"
-  },
-  {
-    path: "/result",
-    name: "Rà soát lỗ hổng",
-    icon: "nc-icon nc-compass-05",
-    component: Result,
-    layout: "/admin"
-  },
-  {
-    path: "/vulnerability",
-    name: "Chi tiết lỗ hổng",
-    icon: "nc-icon nc-zoom-split",
-    component: Vulnerability,
-    layout: "/admin"
-  },
-  {
-    path: "/vulnerability/:id",
-    name: "Chi tiết lỗ hổng",
-    icon: "nc-icon nc-zoom-split",
-    component: Vulnerability,
-    layout: "/admin"
-  },
-  {
-    path: "/waiting",
-    name: "Đang chờ",
-    icon: "nc-icon nc-watch-time",
-    component: Waiting,
-    layout: "/admin"
-  },
-  {
-    path: "/accepted",
-    name: "Đã chấp nhận",
-    icon: "nc-icon nc-check-2",
-    component: Accepted,
-    layout: "/admin"
-  },
-  {
-    path: "/setting",
-    name: "Cài đặt",
-    icon: "nc-icon nc-settings-gear-64",
-    component: Setting,
+    path: "/ttk",
+    name: "Tạo tài khoản",
+    component: ttk,
     layout: "/admin"
   },
 ];

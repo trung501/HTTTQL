@@ -13,7 +13,7 @@ function SignIn(){
       password:password}
     axios.post('http://117.4.247.68:15333/authenticator/login/',data).then(res=>{
       console.log(res)
-      localStorage.setItem("token",res.data.access)
+      localStorage.setItem("token","HTTTQL "+res.data.access)
       history.push('/admin/dashboard')
     })
    }
@@ -61,11 +61,9 @@ function SignIn(){
             Submit
           </button>
         </div>
-        <p className="forgot-password text-right">
-          Create <Link to="/signup">Account</Link>
-        </p>
         </div>
         
+
       </form>
     </div>
    
