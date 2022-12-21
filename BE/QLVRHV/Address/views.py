@@ -45,7 +45,10 @@ class AddressViewSet(viewsets.ViewSet):
 
     @swagger_auto_schema(method='get', manual_parameters=[], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-list-don-vi')
-    def get_list_don_vi(self, request):       
+    def get_list_don_vi(self, request):    
+        """
+        API này dùng để lấy danh sách đơn vị thuộc quyền quản lý của người dùng hiện tại.
+        """    
         username= request.user.username
         roleId = request.user.roleID
         query_string="SELECT * FROM DONVI WHERE DONVIID=    \
@@ -93,6 +96,9 @@ class AddressViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-info-don-vi')
     def get_info_don_vi(self, request):
+        """
+        API này dùng để lấy thông tin của đơn vị, tham số nhập vào có thể là mã lớp, mã đại đội hoặc mã tiểu đoàn.
+        """ 
         donViID =str(request.query_params.get('donViID'))
         try:
             if donViID.startswith("TD"):
@@ -111,6 +117,9 @@ class AddressViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-name-don-vi')
     def get_name_don_vi(self, request):
+        """
+        API này dùng để lấy ttên của đơn vị, tham số nhập vào có thể là mã lớp, mã đại đội hoặc mã tiểu đoàn.
+        """ 
         donViID =str(request.query_params.get('donViID'))
         try:
             if donViID.startswith("TD"):
