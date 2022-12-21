@@ -1,91 +1,181 @@
-# PolluxUI - Free Bootstrap Admin Dashboard Template
+# [Light Bootstrap Dashboard React](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/?ref=lbdr-readme) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fcreativetimofficial.github.io%2Flight-bootstrap-dashboard-react&text=Light%20Bootstrap%20Dashboard%20React%20-%20Free%20Bootstrap%20Admin%20Template&original_referer=https%3A%2F%2Fdemos.creative-tim.com%2Flight-bootstrap-dashboard-react%2F&via=creativetim&hashtags=react%2Cbootstrap%2Creact-bootstrap%2Ccreativetim%2Ccreative-tim)
 
-This is the free version of the PolluxUI admin dashboard template. PolluxUI has a very simple layout, with muted colors that are easy on the eyes. This admin dashboard template comes with an MIT license, so feel free to use it on all your projects! The premium version contains over 300+ custom handcrafted elements and 5 unique layouts, so if you like what you see, be sure to check out the premium version [here](https://www.bootstrapdash.com/product/polluxui/)
+![version](https://img.shields.io/badge/version-2.0.1-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) [![GitHub issues open](https://img.shields.io/github/issues/creativetimofficial/light-bootstrap-dashboard-react.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/creativetimofficial/light-bootstrap-dashboard-react.svg?maxAge=2592000)]() [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.gg/E4aHAQy)
 
-<h1>Demo</h1>
-Click below to check out the live demo.
+![Product Gif](https://raw.githubusercontent.com/creativetimofficial/public-assets/master/light-bootstrap-dashboard-react/light-bootstrap-dashboard-react.gif)
 
-[![N|Solid](preview.jpg)](https://bootstrapdash.com/demo/polluxui-free/template/)
+**[Light Bootstrap Dashboard React](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/?ref=lbdr-readme)** is an admin dashboard template designed to be beautiful and simple. It is built on top of [React Bootstrap](https://5c507d49471426000887a6a7--react-bootstrap.netlify.com/), using [Light Bootstrap Dashboard](https://www.creative-tim.com/product/light-bootstrap?ref=lbdr-readme) and it is fully responsive. It comes with a big collections of elements that will offer you multiple possibilities to create the app that best fits your needs. It can be used to create admin panels, project management systems, web applications backend, CMS or CRM.
 
+The product represents a big suite of front-end developer tools that can help you jump start your project. We have created it thinking about things you actually need in a dashboard. Light Bootstrap Dashboard React contains multiple handpicked and optimized plugins. Everything is designed to fit with one another. As you will be able to see, the dashboard you can access on Creative Tim is a customization of this product.
+
+It comes with 6 filter colors for the sidebar (`black`, `azure`,`green`,`orange`,`red`,`purple`) and an option to have a background image.
+
+## Table of Contents
+
+- [Versions](#versions)
+- [Demo](#demo)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [File Structure](#file-structure)
+- [Browser Support](#browser-support)
+- [Resources](#resources)
+- [Reporting Issues](#reporting-issues)
+- [Technical Support or Questions](#technical-support-or-questions)
+- [Licensing](#licensing)
+- [Useful Links](#useful-links)
+
+## Versions
+
+[<img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/logos/html-logo.jpg" width="60" height="60" />](https://www.creative-tim.com/product/light-bootstrap-dashboard?ref=lbdr-readme)[<img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/logos/react-logo.jpg" width="60" height="60" />](https://www.creative-tim.com/product/light-bootstrap-dashboard-react?ref=lbdr-readme)[<img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/logos/vue-logo.jpg" width="60" height="60" />](https://www.creative-tim.com/product/vue-light-bootstrap-dashboard?ref=lbdr-readme)[<img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/logos/angular-logo.jpg" width="60" height="60" />](https://www.creative-tim.com/product/light-bootstrap-dashboard-angular2?ref=lbdr-readme)
+
+| HTML                                                                                                                                                                                                                                                   | React                                                                                                                                                                                                                                                                     | Vue                                                                                                                                                                                                                                                               | Angular                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![Light Bootstrap Dashboard HTML](https://github.com/creativetimofficial/public-assets/blob/master/light-bootstrap-dashboard/light-bootstrap-dashboard.jpg?raw=true)](https://www.creative-tim.com/product/light-bootstrap-dashboard?ref=lbdr-readme) | [![Light Bootstrap Dashboard React](https://github.com/creativetimofficial/public-assets/blob/master/light-bootstrap-dashboard-react/light-bootstrap-dashboard-react.jpg?raw=true)](https://www.creative-tim.com/product/light-bootstrap-dashboard-react?ref=lbdr-readme) | [![Vue Light Bootstrap Dashboard](https://github.com/creativetimofficial/public-assets/blob/master/vue-light-bootstrap-dashboard/vue-light-bootstrap-dashboard.jpg?raw=true)](https://www.creative-tim.com/product/vue-light-bootstrap-dashboard?ref=lbdr-readme) | [![Light Bootstrap Dashboard Angular](https://github.com/creativetimofficial/public-assets/blob/master/light-bootstrap-dashboard-angular/light-bootstrap-dashboard-angular.jpg?raw=true)](https://www.creative-tim.com/product/light-bootstrap-dashboard-angular2?ref=lbdr-readme) |
+
+## Demo
+
+| Dashboard                                                                                                                                                                                                                                        | User Profile                                                                                                                                                                                                                                       | Tables                                                                                                                                                                                                                                           | Maps                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![Start page](https://raw.githubusercontent.com/creativetimofficial/public-assets/master/light-bootstrap-dashboard-react/dashboard-page.png)](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/dashboard?ref=lbdr-readme) | [![User profile page](https://raw.githubusercontent.com/creativetimofficial/public-assets/master/light-bootstrap-dashboard-react/user-page.png)](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/user-page?ref=lbdr-readme) | [![Tables page ](https://raw.githubusercontent.com/creativetimofficial/public-assets/master/light-bootstrap-dashboard-react/tables-page.png)](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/table-list?ref=lbdr-readme) | [![Notifications Page](https://raw.githubusercontent.com/creativetimofficial/public-assets/master/light-bootstrap-dashboard-react/notifications-page.png)](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/notifications?ref=lbdr-readme) |
+
+[View More](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/dashboard?ref=lbdr-readme).
+
+## Quick start
+
+Quick start options:
+
+- Clone the repo: `git clone https://github.com/creativetimofficial/light-bootstrap-dashboard-react.git`.
+- [Download from Github](https://github.com/creativetimofficial/light-bootstrap-dashboard-react/archive/master.zip).
+- [Download from Creative Tim](https://www.creative-tim.com/product/light-bootstrap-dashboard-react?ref=lbdr-readme).
 
 ## Documentation
-Click [here](https://bootstrapdash.com/demo/polluxui-free/docs/documentation.html) to check out the documentation
 
-### Need support?
-Report your issues with as many details as you can provide and we’ll try to get back to you as soon as possible
+The documentation for the Light Bootstrap Dashboard React is hosted at our [website](https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/documentation/?ref=lbdr-readme).
 
-### More from BootstrapDash
-Here are some of our most popular templates:
+## File Structure
 
-- [StarAdmin Free Bootstrap Admin Template](https://github.com/BootstrapDash/StarAdmin-Free-Bootstrap-Admin-Template)
-- [PurpleAdmin Free Admin Template](https://github.com/BootstrapDash/PurpleAdmin-Free-Admin-Template)
-- [MajesticAdmin Free Bootstrap Admin Template](https://github.com/BootstrapDash/MajesticAdmin-Free-Bootstrap-Admin-Template)
-  
-### Like what you see?
-Please leave a star on our GitHub repo.
-Submit bugs and help us improve Stellar Admin Vue!
-Find us on 
-- [Twitter](https://twitter.com/bootstrapdash?lang=en) 
-- [Facebook](https://www.facebook.com/bootstrapdash/)
-- [Instagram](https://www.instagram.com/bootstrapdash/?hl=en)
-- [Behance](https://www.behance.net/bootstrapdash)
-- [Pinterest](https://www.pinterest.com/bootstrapdash/)
-- [Dribbble](https://dribbble.com/bootstrapdash)
-- [LinkedIn](https://in.linkedin.com/in/bootstrapdash)
+Within the download you'll find the following directories and files:
 
-Meticulously built at BootstrapDash. We hope you ❤ PolluxUI!
-### Additional Information
+```
+light-bootstrap-dashboard-react
+.
+├── CHANGELOG.md
+├── ISSUE_TEMPLATE.md
+├── LICENSE.md
+├── README.md
+├── gulpfile.js
+├── jsconfig.json
+├── package.json
+├── Documentation
+│   ├── css
+│   │   ├── demo.css
+│   │   ├── documentation.css
+│   │   └── light-bootstrap-dashboard.css
+│   ├── img
+│   └── tutorial-components.html
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   └── manifest.json
+└── src
+    ├── index.js
+    ├── logo.svg
+    ├── routes.js
+    ├── assets
+    │   ├── css
+    │   │   ├── animate.min.css
+    │   │   ├── demo.css
+    │   │   ├── light-bootstrap-dashboard-react.css
+    │   │   ├── light-bootstrap-dashboard-react.css.map
+    │   │   └── light-bootstrap-dashboard-react.min.css
+    │   ├── fonts
+    │   │   ├── nucleo-icons.eot
+    │   │   ├── nucleo-icons.svg
+    │   │   ├── nucleo-icons.ttf
+    │   │   ├── nucleo-icons.woff
+    │   │   └── nucleo-icons.woff2
+    │   ├── img
+    │   │   └── faces
+    │   └── scss
+    │       ├── lbd
+    │       │   ├── mixins
+    │       │   └── plugins
+    │       ├── lbdr
+    │       │   ├── plugins
+    │       │   └── react-differences.scss
+    │       └── light-bootstrap-dashboard-react.scss
+    ├── layouts
+    │   └── Admin.js
+    ├── components
+    │   ├── FixedPlugin
+    │   │   └── FixedPlugin.js
+    │   ├── Footer
+    │   │   └── Footer.js
+    │   ├── Navbars
+    │   │   └── AdminNavbar.js
+    │   └── Sidebar
+    │       └── Sidebar.js
+    └── views
+        ├── Dashboard.js
+        ├── Icons.js
+        ├── Maps.js
+        ├── Notifications.js
+        ├── TableList.js
+        ├── Typography.js
+        ├── Upgrade.js
+        └── UserProfile.js
+```
 
-#### Credits:
-- Bootstrap 4
-- Font Awesome
-- jQuery
-- Gulp
-- Chart.js
+## Browser Support
 
-#### Browser Support:
-PolluxUI is designed to work flawlessly with all the latest and modern web browsers.
+At present, we officially aim to support the last two versions of the following browsers:
 
-- Chrome (latest)
-- FireFox (latest)
-- Safari (latest)
-- Opera (latest)
-- IE10+
+<img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/chrome.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/firefox.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/edge.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/safari.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/opera.png" width="64" height="64">
 
-#### License Information:
+## Resources
 
-PolluxUI is released under MIT license. This is a free Bootstrap 4 admin template developed by BootstrapDash. Feel free to download it, use it, share it, and get creative with it.
+- Demo: https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/admin/dashboard?ref=lbdr-readme
+- Download Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react?ref=lbdr-readme
+- Documentation: https://demos.creative-tim.com/light-bootstrap-dashboard-react/#/documentation/tutorial?ref=lbdr-readme
+- License Agreement: https://www.creative-tim.com/license?ref=lbdr-readme
+- Support: https://www.creative-tim.com/contact-us?ref=lbdr-readme
+- Issues: [Github Issues Page](https://github.com/creativetimofficial/light-bootstrap-dashboard-react/issues)
 
-##### How to use PolluxUI?
+## Reporting Issues
 
-1 - Click the Clone or Download button in GitHub and download as a ZIP file
+We use GitHub Issues as the official bug tracker for the Light Bootstrap Dashboard React. Here are some advices for our users that want to report an issue:
 
-2 - After the files have been downloaded you will get a folder with all the required files.
+1. Make sure that you are using the latest version of the Light Bootstrap Dashboard React. Check the CHANGELOG from your dashboard on our [website](https://www.creative-tim.com/?ref=lbdr-readme).
+2. Providing us reproducible steps for the issue will shorten the time it takes for it to be fixed.
+3. Some issues may be browser specific, so specifying in what browser you encountered the issue might help.
 
-3 - You can install all the dependencies in the template by running the command npm install. All the required files are in the node modules. If you didn't run with admin authorities, you will see errors
+## Technical Support or Questions
 
-4 - Find the file named index.html, check what all components you need. Open the file in a text editor and you can start editing.
+If you have questions or need help integrating the product please [contact us](https://www.creative-tim.com/contact-us?ref=lbdr-readme) instead of opening an issue.
 
-5 - Now that your project has now kick-started, all you need to do now is to code, code, and code to your heart's content.
+## Licensing
 
+- Copyright 2022 Creative Tim (https://www.creative-tim.com?ref=lbdr-readme)
+- Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
 
-#### How to Contribute?
-We love your contributions and we welcome them wholeheartedly. To contribute make sure you have Node.js and npm installed. Now run the command gulp --version. If the command returns with the Gulp version number, it means you have Gulp installed. If not you need to run the command npm install --global gulp-cli to install Gulp.
+## Useful Links
 
+More products from Creative Tim: <https://www.creative-tim.com/products?ref=lbdr-readme>
 
-After Gulp has been installed, follow the steps below to contribute.
+Tutorials: <https://www.youtube.com/channel/UCVyTG4sCw-rOvB9oHkzZD1w>
 
-1 - Fork and clone the repo.
+Freebies: <https://www.creative-tim.com/products?ref=lbdr-readme>
 
-2 - Run the command npm install to install all the dependencies.
+Affiliate Program (earn money): <https://www.creative-tim.com/affiliates/new?ref=lbdr-readme>
 
-3 - Enter the command gulp serve. This will open PolluxUI in your default browser.
+Social Media:
 
-4 - Make your contribution.
+Twitter: <https://twitter.com/CreativeTim>
 
-5 - Submit a pull request.
+Facebook: <https://www.facebook.com/CreativeTim>
 
+Dribbble: <https://dribbble.com/creativetim>
 
-#### Go Premium!
+Google+: <https://plus.google.com/+CreativetimPage>
 
-Do you need a template with more features and functionalities? Get more with our collection of the premium template with more plugins, eye-catching animations, UI components, and sample pages all fitting together with a high-quality design. Visit [https://www.bootstrapdash.com](https://www.bootstrapdash.com) for more admin templates.
+Instagram: <https://instagram.com/creativetimofficial>
