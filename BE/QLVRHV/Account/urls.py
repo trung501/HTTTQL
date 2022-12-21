@@ -13,5 +13,6 @@ urlpatterns = [
     path('authenticator/changePassword/', ChangePasswordViewSet.as_view(), name='change_password'),
     path('authenticator/refreshToken/', TokenRefreshView.as_view(), name='token_refresh'),
     path('authenticator/logout', BlacklistRefreshViewSet.as_view(), name="logout"),
+    path('account/setRoleUser', SetRoleViewSet.as_view(), name="set_role_user"),
    
 ]
