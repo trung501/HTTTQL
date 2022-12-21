@@ -58,7 +58,8 @@ class PersonViewSet(viewsets.ViewSet):
 
     def CheckQuyetDinhCamTrai(self, maHV, time_go: "12-08-2022"):
         try:
-            time_go = datetime.strptime(time_go, '%d-%m-%Y').date()
+            if isinstance(type(time_go), str):
+                time_go = datetime.strptime(time_go, '%d-%m-%Y').date()
             query_string = f'SELECT * FROM QUYETDINHCAMTRAI \
                             WHERE MAHV = %s \
                             AND TG_BatDau <= %s\
@@ -184,13 +185,20 @@ class PersonViewSet(viewsets.ViewSet):
             timeEnd = dataDict.get("time_end")
             timeStart = datetime.strptime(timeStart, '%Y-%m-%d %H:%M')
             timeEnd = datetime.strptime(timeEnd, '%Y-%m-%d %H:%M')
+            checkCamTrai, listReason = self.CheckQuyetDinhCamTrai(maHV, timeStart)
+            if checkCamTrai:
+                return Response(data={}, status=status.HTTP_403_FORBIDDEN)           
+
             query_string = f'INSERT INTO DSDANGKY("HinhThucRN","DiaDiem","ThoiGianDi","ThoiGianVe","MaHV","TRANGTHAIXD") VALUES (%s,%s,%s,%s,%s,0);'
             param = [hinhThucRN, diaDiem, timeStart, timeEnd, maHV]
             with connection.cursor() as cursor:
                 cursor.execute(query_string, param)
                 rows_affected = cursor.rowcount
+                print(rows_affected)
             if rows_affected == 0:
                 return Response(data={"status": False}, status=status.HTTP_200_OK)
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    
