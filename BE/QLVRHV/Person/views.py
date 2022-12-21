@@ -179,6 +179,8 @@ class PersonViewSet(viewsets.ViewSet):
                 hinhThucRN = "Tranh thủ"
             else:
                 hinhThucRN = "Ra ngoài"
+
+
             diaDiem = dataDict.get("dia_diem")
             maHV = dataDict.get("ma_HV")
             timeStart = dataDict.get("time_start")
@@ -304,3 +306,43 @@ class PersonViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STT_dang_ky': openapi.Schema(type=openapi.TYPE_INTEGER, description="Số thứ tự trong danh sách đăng ký ra ngoài", default=1),
+            'xet_duyet': openapi.Schema(type=openapi.TYPE_INTEGER,description="Trạng thái xét duyệt,1 là được duyệt,-1 là không được duyệt", default=1)
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-xet-duyet-ra-ngoai')
+    def post_xet_duyet_ra_ngoai(self, request):
+        """
+        API này dùng để xét duyệt học viên ra ngoài. Đối với trạng thái xét duyệt, nhập 1 nếu duyệt và nhập -1 nếu không được duyệt. 
+        """
+        roleId = int(request.user.roleID)
+        dataDict = request.data
+        STT_dang_ky =int(dataDict.get("STT_dang_ky"))
+        xet_duyet = int(dataDict.get("xet_duyet"))
+        if xet_duyet == 1:
+            xet_duyet = roleId
+        elif xet_duyet == -1:
+            xet_duyet = -roleId
+        else:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try: 
+            query_string = f"SELECT * FROM DSDANGKY WHERE STT = {STT_dang_ky}"
+            obj = generics_cursor.getDictFromQuery(query_string, [])
+            if len(obj) > 0:
+                data_dang_ky= obj[0]
+            if  abs(int(data_dang_ky["TRANGTHAIXD"])) > abs(xet_duyet):
+                return Response(data={"status": False}, status=status.HTTP_304_NOT_MODIFIED)
+          
+            query_string = f'UPDATE "DSDANGKY" SET TRANGTHAIXD= {xet_duyet} WHERE STT = {STT_dang_ky}'
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, [])
+                rows_affected = cursor.rowcount
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
