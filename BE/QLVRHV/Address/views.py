@@ -62,7 +62,7 @@ class AddressViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-list-don-vi')
     def get_list_don_vi(self, request):    
         """
-        API này dùng để lấy danh sách đơn vị thuộc quyền quản lý của người dùng hiện tại.
+        API này dùng để lấy danh sách đơn vị thuộc quyền quản lý của người dùng hiện tại. Level: 1- lớp, 2 - đại đội , 3 - tiểu đoàn, 4 - học viện
         """    
         username= request.user.username
         roleId = request.user.roleID
@@ -96,6 +96,7 @@ class AddressViewSet(viewsets.ViewSet):
                         if lop['MaLop'] is not None:
                             list_don_vi[tieu_doan][dai_doi['MaDaiDoi']].append(lop['MaLop'])
         level=0
+        roleId=GUARDSMAN_ROLE
         if roleId == GUARDSMAN_ROLE or roleId == ACADEMY_ROLE:
             output=list_don_vi
             level=4
