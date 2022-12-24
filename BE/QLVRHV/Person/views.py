@@ -93,6 +93,8 @@ class PersonViewSet(viewsets.ViewSet):
         try:
             query_string = "SELECT * FROM HOCVIEN \
                             INNER JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID\
+                            JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            JOIN LOAIHOCVIEN ON LOAIHOCVIEN.MALOAI = HOCVIEN.LOAIHOCVIEN \
                             WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
