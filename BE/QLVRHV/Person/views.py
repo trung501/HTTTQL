@@ -92,9 +92,12 @@ class PersonViewSet(viewsets.ViewSet):
         donViID = str(request.query_params.get('donViID'))
         try:
             query_string = "SELECT * FROM HOCVIEN \
-                            INNER JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID\
-                            JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
-                            JOIN LOAIHOCVIEN ON LOAIHOCVIEN.MALOAI = HOCVIEN.LOAIHOCVIEN \
+                            LEFT JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID\
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN LOAIHOCVIEN ON LOAIHOCVIEN.MALOAI = HOCVIEN.LOAIHOCVIEN \
                             WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
