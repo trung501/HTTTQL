@@ -58,7 +58,8 @@ class PersonViewSet(viewsets.ViewSet):
 
     def CheckQuyetDinhCamTrai(self, maHV, time_go: "12-08-2022"):
         try:
-            time_go = datetime.strptime(time_go, '%d-%m-%Y').date()
+            if isinstance(type(time_go), str):
+                time_go = datetime.strptime(time_go, '%d-%m-%Y').date()
             query_string = f'SELECT * FROM QUYETDINHCAMTRAI \
                             WHERE MAHV = %s \
                             AND TG_BatDau <= %s\
@@ -178,16 +179,167 @@ class PersonViewSet(viewsets.ViewSet):
                 hinhThucRN = "Tranh thủ"
             else:
                 hinhThucRN = "Ra ngoài"
+
+
             diaDiem = dataDict.get("dia_diem")
             maHV = dataDict.get("ma_HV")
             timeStart = dataDict.get("time_start")
             timeEnd = dataDict.get("time_end")
             timeStart = datetime.strptime(timeStart, '%Y-%m-%d %H:%M')
             timeEnd = datetime.strptime(timeEnd, '%Y-%m-%d %H:%M')
+            checkCamTrai, listReason = self.CheckQuyetDinhCamTrai(maHV, timeStart)
+            if checkCamTrai:
+                return Response(data={}, status=status.HTTP_403_FORBIDDEN)           
+
             query_string = f'INSERT INTO DSDANGKY("HinhThucRN","DiaDiem","ThoiGianDi","ThoiGianVe","MaHV","TRANGTHAIXD") VALUES (%s,%s,%s,%s,%s,0);'
             param = [hinhThucRN, diaDiem, timeStart, timeEnd, maHV]
             with connection.cursor() as cursor:
                 cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-dang-ky')
+    def get_list_dang_ky(self, request):
+        """
+        API này dùng để lấy danh sách các học viên đăng ký theo  đơn vị(lớp, đại đội, tiểu đoàn). timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên đăng ký từ đầu tuần đến cuối tuần nằm trong timeBetween đó.TrạngThaiXD >0 là được duyệt, nếu < 0 là không được  duyệt, còn =0 là chưa được xét duyệt.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        try:
+            query_string = f"SELECT * FROM DSDANGKY WHERE \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-duoc-duyet')
+    def get_list_danh_sach_duoc_duyet(self, request):
+        """
+        API này dùng để lấy danh sách các học viên được xét duyệt theo đơn vị(lớp, đại đội, tiểu đoàn). timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên được xét duyệt từ đầu tuần đến cuối tuần nằm trong timeBetween đó.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        try:
+            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD > 0 AND \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-khong-duoc-duyet')
+    def get_list_danh_sach_khong_duoc_duyet(self, request):
+        """
+        API này dùng để lấy danh sách các học viên không được duyệt theo đơn vị(lớp, đại đội, tiểu đoàn). timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên không được duyệt từ đầu tuần đến cuối tuần nằm trong timeBetween đó.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        try:
+            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD < 0 AND \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-chua-duoc-duyet')
+    def get_list_danh_sach_chua_duoc_duyet(self, request):
+        """
+        API này dùng để lấy danh sách các học viên chưa được xét duyệt theo đơn vị(lớp, đại đội, tiểu đoàn). timeBetween là lựa chọn, nếu không nhập sẽ lấy thời gian ngày hôm nay. API sẽ tìm tất cả các học viên chưa được xét duyệt từ đầu tuần đến cuối tuần nằm trong timeBetween đó.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        try:
+            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD = 0 AND \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STT_dang_ky': openapi.Schema(type=openapi.TYPE_INTEGER, description="Số thứ tự trong danh sách đăng ký ra ngoài", default=1),
+            'xet_duyet': openapi.Schema(type=openapi.TYPE_INTEGER,description="Trạng thái xét duyệt,1 là được duyệt,-1 là không được duyệt", default=1)
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-xet-duyet-ra-ngoai')
+    def post_xet_duyet_ra_ngoai(self, request):
+        """
+        API này dùng để xét duyệt học viên ra ngoài. Đối với trạng thái xét duyệt, nhập 1 nếu duyệt và nhập -1 nếu không được duyệt. 
+        """
+        roleId = int(request.user.roleID)
+        dataDict = request.data
+        STT_dang_ky =int(dataDict.get("STT_dang_ky"))
+        xet_duyet = int(dataDict.get("xet_duyet"))
+        if xet_duyet == 1:
+            xet_duyet = roleId
+        elif xet_duyet == -1:
+            xet_duyet = -roleId
+        else:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try: 
+            query_string = f"SELECT * FROM DSDANGKY WHERE STT = {STT_dang_ky}"
+            obj = generics_cursor.getDictFromQuery(query_string, [])
+            if len(obj) > 0:
+                data_dang_ky= obj[0]
+            if  abs(int(data_dang_ky["TRANGTHAIXD"])) > abs(xet_duyet):
+                return Response(data={"status": False}, status=status.HTTP_304_NOT_MODIFIED)
+          
+            query_string = f'UPDATE "DSDANGKY" SET TRANGTHAIXD= {xet_duyet} WHERE STT = {STT_dang_ky}'
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, [])
                 rows_affected = cursor.rowcount
             if rows_affected == 0:
                 return Response(data={"status": False}, status=status.HTTP_200_OK)

@@ -43,11 +43,26 @@ class AddressViewSet(viewsets.ViewSet):
         status.HTTP_200_OK: 'JSON',
     }
 
+    def getNameDonVi(self,donViID):
+        try:
+            if donViID.startswith("TD"):
+                query_string="SELECT MaTD code, TenTD name FROM TIEUDOAN WHERE TIEUDOAN.MaTD =  %s "
+            elif donViID.startswith("DD"):
+                query_string="SELECT MaDD code, TenDD name FROM DAIDOI WHERE DAIDOI.MaDD =  %s "
+            elif donViID.startswith("L"):
+                query_string="SELECT MALOP code, TenLop name FROM LOP WHERE LOP.MaLop =  %s "
+            obj=generics_cursor.getDictFromQuery(query_string,[donViID])
+            if obj is None or len(obj)==0:
+                return ""
+        except:
+            return ""
+        return obj[0]["name"]
+
     @swagger_auto_schema(method='get', manual_parameters=[], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-list-don-vi')
     def get_list_don_vi(self, request):    
         """
-        API này dùng để lấy danh sách đơn vị thuộc quyền quản lý của người dùng hiện tại.
+        API này dùng để lấy danh sách đơn vị thuộc quyền quản lý của người dùng hiện tại. Level: 1- lớp, 2 - đại đội , 3 - tiểu đoàn, 4 - học viện
         """    
         username= request.user.username
         roleId = request.user.roleID
@@ -59,8 +74,6 @@ class AddressViewSet(viewsets.ViewSet):
                         )"
         address_user=generics_cursor.getDictFromQuery(query_string,[username])[0]
         list_tieu_doan={}
-        print(address_user)
-        # roleId=COMPANY_ROLE
         query_string="SELECT * FROM TIEUDOAN"
         address = generics_cursor.getDictFromQuery(query_string,[])
         list_tieu_doan['HV']=[]
@@ -82,16 +95,46 @@ class AddressViewSet(viewsets.ViewSet):
                     for lop in list_lop:
                         if lop['MaLop'] is not None:
                             list_don_vi[tieu_doan][dai_doi['MaDaiDoi']].append(lop['MaLop'])
-
+        level=0
+        roleId=GUARDSMAN_ROLE
         if roleId == GUARDSMAN_ROLE or roleId == ACADEMY_ROLE:
             output=list_don_vi
+            level=4
         elif roleId == BATTALION_ROLE:
             output={address_user['MaTieuDoan']:list_don_vi[address_user['MaTieuDoan']]}
+            level=3
         elif roleId == COMPANY_ROLE:
             output={address_user['MaDaiDoi']:list_don_vi[address_user['MaTieuDoan']][address_user['MaDaiDoi']]}
+            level=2
         elif roleId == CLASS_ROLE:
             output = address_user['MaLop'] 
-        return Response(data=output, status=status.HTTP_200_OK)
+            level=1
+
+        result = []
+        if isinstance(output, dict):
+            for k,v in output.items():
+                name = self.getNameDonVi(k)
+                outer_dict = {"code": k,"name":name, "data": []}
+                if isinstance(v, dict):
+                    for inner_k, inner_v in v.items():
+                        list_lop=[]
+                        for lop in inner_v:
+                            name_lop= self.getNameDonVi(lop)
+                            list_lop.append({"code":lop, "name":name_lop,})
+                        inner_name=self.getNameDonVi(inner_k)
+                        inner_dict = {"code": inner_k, "name":inner_name,"data": list_lop}
+                        outer_dict["data"].append(inner_dict)
+                else:
+                    print(v)
+                    for lop in v:
+                        name_lop= self.getNameDonVi(lop)
+                        outer_dict["data"].append({"code":lop, "name":name_lop,})
+                result.append(outer_dict)
+        else:
+            for lop in output:
+                name_lop= self.getNameDonVi(lop)
+                result.append({"code":lop, "name":name_lop,})
+        return Response(data={"level":level,"data":result}, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID], responses=get_list_don_vi_response)
     @action(methods=['GET'], detail=False, url_path='get-info-don-vi')
