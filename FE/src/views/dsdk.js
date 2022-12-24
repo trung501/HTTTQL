@@ -103,10 +103,16 @@ function TableListAdmin() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Danh sách người dùng quản trị</Card.Title>
-                <p className="card-category">
-                  <Button>Add new users</Button>
-                </p>
+              <Col md="3">
+                <div className="form-group">
+                  <input
+                    className="form-control url"
+                    placeholder="Website URL (e.g.. yourdomain.com)"
+                    // value={url}
+                    // onChange={e=>setUrl(e.target.value)}
+                  />
+                </div>
+                </Col>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">

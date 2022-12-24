@@ -15,15 +15,54 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React, { Component,useState, useEffect} from "react";
 import { useLocation } from "react-router-dom";
 import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
+import  './Navbar.css'
+import axiosClient from "service/axiosClient";
 
 
 import routes from "routes.js";
 
 function Header() {
   const location = useLocation();
+  const [isShowMenu,setIsShowMenu] = useState(false)
+  const [id,setId] = useState()
+  // const [dv,setDv] = useState([{
+  //   name:"Tiểu đoàn 1",
+  //   dv:[{
+  //     nameDV:"c155",
+  //     class:[
+  //     "BĐATTT"
+  //     ]
+  // }]
+  // }])
+    const [dv,setDv] = useState([])
+    const [listDv, setListDv] = useState([])
+    useEffect(() => {
+      async function getItem() {
+        const res = await axiosClient.get("/Address/get-list-don-vi");
+        setDv(res.data)
+        setListDv(Object.keys(res.data));     
+        // console.log(Object.keys(res.data))
+        console.log(dv)
+      }
+      getItem();
+    }, []);
+    console.log(dv)
+    const[tenDv, setTenDv] = useState()
+    async function getTenDv(maDv){
+      const res = await axiosClient.get(`/Address/get-name-don-vi/?donViID=${maDv}`)
+      setTenDv(res.data.name)
+    }
+    function getId(id){
+      // console.log(id)
+      showMenu()
+      setId(id)
+     }
+    
+
+  
   const mobileSidebarToggle = (e) => {
     e.preventDefault();
     document.documentElement.classList.toggle("nav-open");
@@ -44,6 +83,9 @@ function Header() {
     }
     return "Brand";
   };
+  const showMenu = ()=>{
+    setIsShowMenu(!isShowMenu)
+  }
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -81,52 +123,52 @@ function Header() {
                 <span className="d-lg-none ml-1">Dashboard</span>
               </Nav.Link>
             </Nav.Item> */}
-            {/* <Dropdown as={Nav.Item}>
-              <Dropdown.Toggle
-                as={Nav.Link}
-                data-toggle="dropdown"
-                id="dropdown-67443507"
-                variant="default"
-                className="m-0"
-              >
-                <i className="nc-icon nc-planet"></i>
-                <span className="notification">5</span>
-                <span className="d-lg-none ml-1">Notification</span>
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Notification 1
-                </Dropdown.Item>
-                <Dropdown.Item
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Notification 2
-                </Dropdown.Item>
-                <Dropdown.Item
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Notification 3
-                </Dropdown.Item>
-                <Dropdown.Item
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Notification 4
-                </Dropdown.Item>
-                <Dropdown.Item
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Another notification
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
-            <Nav.Item>
+            <div>
+              <input
+            type="username"  
+            value=""
+            // onChange={e=>setUsername(e.target.value)}
+            className="form-control email"
+            placeholder="Enter username"
+           />
+            <div onClick={showMenu}><i className="nc-icon nc-stre-down"></i></div>
+           
+            </div>
+          
+            {isShowMenu &&  
+            <div className="dropdown">
+              <ul className="list">
+                {dv.data.map((item,index)=>{
+                  return (
+                    <li className="item">
+                    <p onClick={(e)=>getId(item.code)}>{item.name}</p>
+                    <ul className="list-1">
+                      {item.data.map((dd)=>{
+                        return (
+                        <li className="item-1">
+                        <p  onClick={(e)=>getId(dd.code)}>{dd.name}</p>
+                        <ul className="list-2">
+                          {dd.data.map((lop)=>{
+                          return (
+                            <li className="="item-2>
+                              <p  onClick={(e)=>getId(lop.code)}>{lop.name}</p>
+                            </li>
+                          )
+                          }
+                       ) }
+                        </ul>
+                    </li>
+                        )
+                      }
+                      )}
+                    </ul>
+                  </li>
+                  )
+                })}
+                
+              </ul>
+            </div>}
+            {/* <Nav.Item>
               <Nav.Link
                 className="m-0"
                 href="#pablo"
@@ -135,7 +177,7 @@ function Header() {
                 <i className="nc-icon nc-zoom-split"></i>
                 <span className="d-lg-block"> Search</span>
               </Nav.Link>
-            </Nav.Item>
+            </Nav.Item> */}
           </Nav>
           <Nav className="ml-auto" navbar>
             <Nav.Item>

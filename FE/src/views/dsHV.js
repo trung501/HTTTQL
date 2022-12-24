@@ -20,13 +20,11 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const [listUsers, setlistUsers] = useState([]);
+  const [listHV, setlistHV] = useState([]);
   useEffect(() => {
     async function getItem() {
-      const res = await axiosClient.get("users/accepted");
-      //console.log(res.data.items);
-      // setlistUsers((listUsers) => [...res.data.items, ...listUsers]);
-      setlistUsers(res.data.items);
+      const res = await axiosClient.get(`get-list-hoc-vien/?donViID=${id}`);
+      console.log(res)
     }
     getItem();
 
@@ -37,7 +35,7 @@ function TableListAdmin() {
     // console.log('You clicked submit.');
     // console.log(id)
     await axiosClient.delete(`users/${id}/delete`);
-      setlistUsers(
+      setlistHV(
         listUsers.filter((user) => {
           return user.id !== id;
         })
@@ -103,28 +101,24 @@ function TableListAdmin() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Danh sách người dùng quản trị</Card.Title>
-                <p className="card-category">
-                  <Button>Add new users</Button>
-                </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
                   <thead>
                     <tr>
-                      <th className="border-0">ID</th>
-                      <th className="border-0">Email</th>
-                      <th className="border-0">is_accepted</th>
-                      <th className="border-0">running</th>
-                      <th className="border-0">finished</th>
-                      <th className="border-0">total_alert</th>
-                      <th className="border-0">total_scan</th>
-                      <th className="border-0">Actions</th>
+                      <th className="border-0">Mã học viên</th>
+                      <th className="border-0">Loại học viên</th>
+                      <th className="border-0">Họ tên</th>
+                      <th className="border-0">Ngày sinh</th>
+                      <th className="border-0">Cấp bậc</th>
+                      <th className="border-0">Chức vụ</th>
+                      <th className="border-0">Đơn vị</th>
+                      <th className="border-0">Quê quán</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {listUsers &&
-                      listUsers.map((item) => {
+                    {listHV &&
+                      listHV.map((item) => {
                         return (
                           <tr key={item.id}>
                             <td>{item.id}</td>

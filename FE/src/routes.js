@@ -23,6 +23,7 @@ import dsKDxd from "views/dsKDxd.js";
 import qdct from "views/qdct.js";
 import dsHV from "views/dsHV.js";
 import dsRV from "views/dsRV.js";
+import kqrl from "views/kqrl.js";
 import dsVP from "views/dsVP.js";
 import ttk from "views/ttk.js";
 
@@ -76,6 +77,12 @@ const dashboardRoutes = [
     path: "/dsRV",
     name: "Danh sách ra vào",
     component: dsHV,
+    layout: "/admin"
+  },
+  {
+    path: "/kqrl",
+    name: "Kết quả rèn luyện",
+    component: kqrl,
     layout: "/admin"
   },
   {
