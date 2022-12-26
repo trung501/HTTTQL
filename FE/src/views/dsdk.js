@@ -3,8 +3,8 @@ import { useEffect } from "react";
 // import apiAdmin from "../service/Admin/apiAdmin";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
-
-
+import DateTimePicker from 'react-datetime-picker';
+import "../assets/css/btn_vul.css"
 
 // react-bootstrap components
 import {
@@ -20,13 +20,13 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const [listUsers, setlistUsers] = useState([]);
+  const [listDSDK, setlistDSDK] = useState([]);
+  const [value, onChange] = useState(new Date());
   useEffect(() => {
     async function getItem() {
-      const res = await axiosClient.get("users/accepted");
-      //console.log(res.data.items);
-      // setlistUsers((listUsers) => [...res.data.items, ...listUsers]);
-      setlistUsers(res.data.items);
+      const res = await axiosClient.get(`get-list-dang-ky/?donViID=${id}&timeBetween=${value}`);
+      console.log(res.data);
+      setlistDSDK((listDSDK) => [...res.data]);
     }
     getItem();
 
@@ -37,7 +37,7 @@ function TableListAdmin() {
     // console.log('You clicked submit.');
     // console.log(id)
     await axiosClient.delete(`users/${id}/delete`);
-      setlistUsers(
+      setlistDSDK(
         listUsers.filter((user) => {
           return user.id !== id;
         })
@@ -104,13 +104,8 @@ function TableListAdmin() {
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
               <Col md="3">
-                <div className="form-group">
-                  <input
-                    className="form-control url"
-                    placeholder="Website URL (e.g.. yourdomain.com)"
-                    // value={url}
-                    // onChange={e=>setUrl(e.target.value)}
-                  />
+                <div className="date">
+                  <DateTimePicker onChange={onChange} value={value} />
                 </div>
                 </Col>
               </Card.Header>
@@ -118,28 +113,27 @@ function TableListAdmin() {
                 <Table className="table-hover table-striped">
                   <thead>
                     <tr>
-                      <th className="border-0">ID</th>
-                      <th className="border-0">Email</th>
-                      <th className="border-0">is_accepted</th>
-                      <th className="border-0">running</th>
-                      <th className="border-0">finished</th>
-                      <th className="border-0">total_alert</th>
-                      <th className="border-0">total_scan</th>
-                      <th className="border-0">Actions</th>
+                      <th className="border-0">STT</th>
+                      <th className="border-0">Hình thức ra ngoài</th>
+                      <th className="border-0">Địa điểm</th>
+                      <th className="border-0">Thời gian đi</th>
+                      <th className="border-0">Thời gian về</th>
+                      <th className="border-0">Mã học viên</th>
+                      <th className="border-0">Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody>
                     {listUsers &&
                       listUsers.map((item) => {
                         return (
-                          <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.email}</td>
-                            <td>{String(item.is_accepted)}</td>
-                            <td>{item.running}</td>
-                            <td>{item.finished}</td>
-                            <td>{item.total_scan}</td>
-                            <td>{item.total_alert}</td>
+                          <tr key={item.STT}>
+                            <td>{item.STT}</td>
+                            <td>{item.HinhThucRN}</td>
+                            <td>{item.DiaDiem}</td>
+                            <td>{item.ThoiGianDi}</td>
+                            <td>{item.ThoiGianVe}</td>
+                            <td>{item.MaHV}</td>
+                            <td>{item.TRANGTHAIXD}</td>
                             <td>
                               <Button type="button" onClick={()=>goDetail()}>
                                 Detail

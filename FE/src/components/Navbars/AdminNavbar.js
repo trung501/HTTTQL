@@ -15,19 +15,20 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component,useState, useEffect} from "react";
+import React, { Component,useState, useEffect,useContext} from "react";
 import { useLocation } from "react-router-dom";
 import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
 import  './Navbar.css'
 import axiosClient from "service/axiosClient";
-
+import { GlobalState } from "layouts/Slidenav";
 
 import routes from "routes.js";
 
 function Header() {
+  const {id,setId} = useContext(GlobalState)
   const location = useLocation();
   const [isShowMenu,setIsShowMenu] = useState(false)
-  const [id,setId] = useState()
+ 
   // const [dv,setDv] = useState([{
   //   name:"Tiểu đoàn 1",
   //   dv:[{
@@ -55,10 +56,11 @@ function Header() {
       const res = await axiosClient.get(`/Address/get-name-don-vi/?donViID=${maDv}`)
       setTenDv(res.data.name)
     }
-    function getId(id){
+    function getId(id, name){
       // console.log(id)
       showMenu()
       setId(id)
+      setTenDv(name)
      }
     
 
@@ -123,15 +125,14 @@ function Header() {
                 <span className="d-lg-none ml-1">Dashboard</span>
               </Nav.Link>
             </Nav.Item> */}
-            <div>
-              <input
+            <div className="icon-down"  onClick={showMenu}>
+              <input disabled
             type="username"  
-            value=""
+            value={tenDv}
             // onChange={e=>setUsername(e.target.value)}
-            className="form-control email"
-            placeholder="Enter username"
+            className=" form-control email"
            />
-            <div onClick={showMenu}><i className="nc-icon nc-stre-down"></i></div>
+            <div onClick={showMenu}><i className="nc-icon nc-stre-down "></i></div>
            
             </div>
           
@@ -141,17 +142,17 @@ function Header() {
                 {dv.data.map((item,index)=>{
                   return (
                     <li className="item">
-                    <p onClick={(e)=>getId(item.code)}>{item.name}</p>
+                    <p onClick={(e)=>getId(item.code, item.name)}>{item.name}</p>
                     <ul className="list-1">
                       {item.data.map((dd)=>{
                         return (
                         <li className="item-1">
-                        <p  onClick={(e)=>getId(dd.code)}>{dd.name}</p>
+                        <p  onClick={(e)=>getId(dd.code, dd.name)}>{dd.name}</p>
                         <ul className="list-2">
                           {dd.data.map((lop)=>{
                           return (
-                            <li className="="item-2>
-                              <p  onClick={(e)=>getId(lop.code)}>{lop.name}</p>
+                            <li className="item-2">
+                              <p  onClick={(e)=>getId(lop.code, lop.name)}>{lop.name}</p>
                             </li>
                           )
                           }

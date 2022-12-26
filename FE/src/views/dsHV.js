@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { useEffect } from "react";
 // import apiAdmin from "../service/Admin/apiAdmin";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
-
-
+import { GlobalState } from "layouts/Slidenav";
+import { Pagination } from "@mui/material";
 
 // react-bootstrap components
 import {
@@ -20,17 +20,20 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
+  const {id,setId}= useContext(GlobalState)
+  console.log(id)
   const [listHV, setlistHV] = useState([]);
   useEffect(() => {
     async function getItem() {
-      const res = await axiosClient.get(`get-list-hoc-vien/?donViID=${id}`);
+      const res = await axiosClient.get(`/Person/get-list-hoc-vien/?page=0&size=12&donViID=${id}`);
       console.log(res)
+      setlistHV((listHV)=>[...res.data]);
     }
     getItem();
 
     // getAcc();
     //deleteAcc(id);
-  }, []);
+  }, [id]);
   async function deleteItem(id) {
     // console.log('You clicked submit.');
     // console.log(id)
@@ -112,7 +115,8 @@ function TableListAdmin() {
                       <th className="border-0">Ngày sinh</th>
                       <th className="border-0">Cấp bậc</th>
                       <th className="border-0">Chức vụ</th>
-                      <th className="border-0">Đơn vị</th>
+                      <th className="border-0">Đại đội</th>
+                      <th className="border-0">Lớp</th>
                       <th className="border-0">Quê quán</th>
                     </tr>
                   </thead>
@@ -120,15 +124,18 @@ function TableListAdmin() {
                     {listHV &&
                       listHV.map((item) => {
                         return (
-                          <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.email}</td>
-                            <td>{String(item.is_accepted)}</td>
-                            <td>{item.running}</td>
-                            <td>{item.finished}</td>
-                            <td>{item.total_scan}</td>
-                            <td>{item.total_alert}</td>
-                            <td>
+                          <tr key={item.MaHV}>
+                            <td>{item.MaHV}</td>
+                            <td>{item.TENLOAI}</td>
+                            {/* <td>{item.PERSONID}</td> */}
+                            <td>{item.HoTen}</td>
+                            <td>{item.NgSinh}</td>
+                            <td>{item.CapBac}</td>
+                            <td>{item.ChucVu}</td>
+                            <td>{item.TenDD}</td>
+                            <td>{item.TenLop}</td>
+                            <td>{item.QueQuan}</td>
+                            {/* <td>
                               <Button type="button" onClick={()=>goDetail()}>
                                 Detail
                               </Button>
@@ -136,7 +143,7 @@ function TableListAdmin() {
                                 Delete
                               </Button>
                               <Button>Update</Button>
-                            </td>
+                            </td> */}
                           </tr>
                         );
                       })}
@@ -146,6 +153,10 @@ function TableListAdmin() {
             </Card>
           </Col>
         </Row>
+        <Pagination count={10} variant="outlined" />
+        <Pagination count={10} variant="outlined" color="primary" />
+<Pagination count={10} variant="outlined" color="secondary" />
+<Pagination count={10} variant="outlined" disabled />
       </Container>
     </>
   );

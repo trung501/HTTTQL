@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React, { Component,createContext, useState } from "react";
 import { useLocation, Route, Switch } from "react-router-dom";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
@@ -26,11 +26,12 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import routes from "routes.js";
 
 import sidebarImage from "assets/img/sidebar-0.jpg";
-
+export const GlobalState = createContext()
 function Slidenav() {
   const [image, setImage] = React.useState(sidebarImage);
   const [color, setColor] = React.useState("black");
   const [hasImage, setHasImage] = React.useState(true);
+  const [id,setId] = useState()
   const location = useLocation();
   const mainPanel = React.useRef(null);
   const getRoutes = (routes) => {
@@ -62,7 +63,7 @@ function Slidenav() {
     }
   }, [location]);
   return (
-    <>
+    <GlobalState.Provider value={{id,setId}}>
       <div className="wrapper">
         <Sidebar color={color} image={hasImage ? image : ""} routes={routes} />
         <div className="main-panel" ref={mainPanel}>
@@ -81,7 +82,7 @@ function Slidenav() {
         image={image}
         setImage={(image) => setImage(image)}
       />
-    </>
+    </GlobalState.Provider>
   );
 }
 
