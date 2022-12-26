@@ -163,6 +163,31 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page, sw_size,sw_MaHV], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-ket-qua-ren-luyen-by-id')
+    def get_list_ket_qua_ren_luyen_by_id(self, request):
+        """
+        API này dùng lấy một list danh sách kết quả rèn luyện học viên sắp xếp theo thời gian giảm dần
+        """
+        maHV = str(request.query_params.get('maHV'))
+
+        try:
+            query_string = "SELECT HOCVIEN.MAHV,HOCVIEN.personID,HoTen,NgSinh,PERSON.DonViID,ThoiGian,PhanLoaiRL FROM HV_RENLUYEN  \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = HV_RENLUYEN.MaHV \
+                            LEFT JOIN KQRL ON KQRL.MaLoai = HV_RENLUYEN.MaLoai\
+                            LEFT JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID \
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID  \
+                            WHERE HOCVIEN.MAHV = %s \
+                            ORDER BY ThoiGian DESC"
+            print(query_string)
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [maHV,])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(method='get', manual_parameters=[], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-permission')
     def get_permission(self, request):
