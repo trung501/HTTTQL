@@ -430,13 +430,13 @@ class PersonViewSet(viewsets.ViewSet):
                 hocvien= obj[0]
                 maKhuVuc= int(hocvien["KHUVUC"])
             if  (maKhuVuc == 0 or maKhuVuc ==3) and roleId != ACADEMY_ROLE:
-                return Response(data={"status": False}, status=status.HTTP_304_NOT_MODIFIED)
+                return Response(data={"status": False, "msg":"Tài khoản không có quyền xét duyệt cho khu vực này"}, status=status.HTTP_200_OK)
             query_string = f'UPDATE "DSDANGKY" SET TRANGTHAIXD= {xet_duyet} WHERE STT = {STT_dang_ky}'
             with connection.cursor() as cursor:
                 cursor.execute(query_string, [])
                 rows_affected = cursor.rowcount
             if rows_affected == 0:
-                return Response(data={"status": False}, status=status.HTTP_200_OK)
+                return Response(data={"status": False,"msg":"Không tìm thấy đối tượng cần xét duyệt"}, status=status.HTTP_200_OK)
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(data={"status": True}, status=status.HTTP_200_OK)
+        return Response(data={"status": True,"msg":"Xét duyệt thành công"}, status=status.HTTP_200_OK)
