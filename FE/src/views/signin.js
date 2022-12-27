@@ -24,16 +24,19 @@ function SignIn(){
         <div className='control'>
         <h3>Sign In</h3>
         <div className="mb-3">
+          
           <label>Username</label>
           <input
-            type="username"  
-            value={username}
+            type="username"
+            
+            className="form-control password"
+            placeholder="Enter password"
             onChange={e=>setUsername(e.target.value)}
-            className="form-control email"
-            placeholder="Enter username"
+            value={username}
           />
         </div>
         <div className="mb-3">
+          
           <label>Password</label>
           <input
             type="password"
