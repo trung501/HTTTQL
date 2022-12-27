@@ -44,7 +44,9 @@ class PersonViewSet(viewsets.ViewSet):
     sw_TimeBetween = openapi.Parameter(
         name='timeBetween', type=openapi.TYPE_STRING, description="Time trong tuần", default="12-08-2022", in_=openapi.IN_QUERY)
     sw_NameHV = openapi.Parameter(
-        name='nameHV', type=openapi.TYPE_STRING, description="Tên học viên", default="Anh", in_=openapi.IN_QUERY)
+        name='nameHV', type=openapi.TYPE_STRING, description="Tên học viên", default="Anh", in_=openapi.IN_QUERY)    
+    sw_SttDangKy = openapi.Parameter(
+        name='sttDangKy', type=openapi.TYPE_INTEGER, description="Số thứ tự đăng ký", default=15, in_=openapi.IN_QUERY)
 
     get_list_person_response = {
         status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -314,6 +316,26 @@ class PersonViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(method='delete', manual_parameters=[sw_SttDangKy], responses=get_list_person_response)
+    @action(methods=['DELETE'], detail=False, url_path='delete-dang-ky')
+    def delete_dang_ky(self, request):
+        """
+        API này dùng để xóa một yêu cầu đăng ký ra ngoài. Để xóa được, học viên đăng ký ra ngoài phải chưa được xét duyệt.
+        """
+        sttDangKy = request.query_params.get('sttDangKy')
+        try:
+            query_string = f"DELETE FROM DSDANGKY WHERE TRANGTHAIXD = 0 AND STT  = %s"
+            param = [sttDangKy]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)            
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-duoc-duyet')
