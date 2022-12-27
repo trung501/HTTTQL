@@ -65,7 +65,7 @@ class PersonViewSet(viewsets.ViewSet):
             query_string = f'SELECT * FROM QUYETDINHCAMTRAI \
                             WHERE MAHV = %s \
                             AND TG_BatDau <= %s\
-                            AND TG_BatDau <= %s  '
+                            AND %s <= TG_KetThuc '
             obj = generics_cursor.getDictFromQuery(
                 query_string, [maHV, time_go, time_go])
             if len(obj) > 0:
