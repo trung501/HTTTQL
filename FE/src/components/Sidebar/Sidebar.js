@@ -42,11 +42,11 @@ function Sidebar({ color, image, routes }) {
             className="simple-text logo-mini mx-1"
           >
             <div className="logo-img">
-              <img src={require("assets/img/reactlogo.png")} alt="..." />
+              <img src={require("assets/img/Layer2.png")} alt="..." />
             </div>
           </a>
           <a className="simple-text" href="http://www.creative-tim.com">
-            NCKH 2022
+            <span type="bold">QUẢN LÍ VÀO RA</span>
           </a>
         </div>
         <Nav>

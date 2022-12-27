@@ -5,6 +5,8 @@ import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
 import { Pagination } from "@mui/material";
+import Modal from 'react-bootstrap/Modal';
+import "../assets/css/btn_vul.css"
 
 // react-bootstrap components
 import {
@@ -17,12 +19,24 @@ import {
   Container,
   Row,
   Col,
+  Form,
 } from "react-bootstrap";
 
 function TableListAdmin() {
   const {id,setId}= useContext(GlobalState)
-  console.log(id)
+  const [maHV,setmaHV] = useState()
+  const [hoTen,setHoTen] = useState()
+  const [loaiHV,setLoaiHV] = useState()
+  const [ngaySinh,setNgaySinh] = useState()
+  const [capBac,setCapBac] = useState()
+  const [chucVu,setChucVu] = useState()
+  const [daiDoi,setDaiDoi] = useState()
+  const [lop,setLop] = useState()
+  const [queQuan,setQueQuan] = useState()
   const [listHV, setlistHV] = useState([]);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   useEffect(() => {
     async function getItem() {
       const res = await axiosClient.get(`/Person/get-list-hoc-vien/?page=0&size=12&donViID=${id}`);
@@ -30,75 +44,109 @@ function TableListAdmin() {
       setlistHV((listHV)=>[...res.data]);
     }
     getItem();
-
-    // getAcc();
-    //deleteAcc(id);
   }, [id]);
-  async function deleteItem(id) {
-    // console.log('You clicked submit.');
-    // console.log(id)
-    await axiosClient.delete(`users/${id}/delete`);
-      setlistHV(
-        listUsers.filter((user) => {
-          return user.id !== id;
-        })
-      )
+  function getTTHV(maHv, hoTen, loaiHV, ngaySinh, capBac, chucVu, daiDoi, lop, queQuan){
+    setShow(true)
+    setmaHV(maHv)
+    setHoTen(hoTen)
+    setLoaiHV(loaiHV)
+    setNgaySinh(ngaySinh)
+    setCapBac(capBac)
+    setChucVu(chucVu)
+    setDaiDoi(daiDoi)
+    setLop(lop)
+    setQueQuan(queQuan)
   }
-
-  
-    // function deleteItem(id) {
-    //   console.log(id);
-    //   axiosClient.delete(`users/${id}/delete`);
-    //   setlistUsers(
-    //     listUsers.filter((user) => {
-    //       return user.id !== id;
-    //     })
-    //   )
-    // }
-
-    // getAcc();
-    //deleteAcc(id);
-
-
-  // async function deleteAcc(id) {
-  //   const respon = await apiAdmin.deleteItem(id);
-  //   console.log(respon);
-  //   return history.push("/admin/user");
-  // }
-  const history = useHistory();
-  const goDetail = () => history.push("/admin/user");
-
-  //console.log(listUsers);
-
-  // async function deleteItem(id) {
-  //   //console.log(id);
-
-  //   const response = await axiosClient.delete(`users/${id}/delete`);
-  //   //console.log(response);
-  //   history.push("/admin/user");
-
-  // setlistUsers(
-  //   listUsers.filter((user) => {
-  //     return user.id !== id;
-  //   })
-  // );
-  // history.push("/admin/user");
-  // }
-
-  // const addAccount=async(id,email,running,finished,total_alert,total_scan)=>{
-  //   let respon=await axiosClient.post('',{
-  //     id:id,
-  //     email:email,
-  //     running:running,
-  //     finished:finished,
-  //     total_alert:total_alert,
-  //     total_scan:total_scan
-  //   });
-  //   setlistUsers([respon.data.items,...listUsers]);
-  // }
-
   return (
     <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Chi tiết học viên</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <Form>
+                <div className="form-group">
+                <label>Mã học viên</label>
+                  <input disabled
+                    className="form-control url"
+                    value={maHV}
+                    onChange={e=>setUrl(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                <label>Loại học viên</label>
+                  <input disabled
+                    className="form-control url"
+                    value={loaiHV}
+                    onChange={e=>setUrl(e.target.value)}
+                  />
+                </div>
+
+                <div class="form-group">
+                <label>Họ tên</label>
+                  <input disabled
+                    className="form-control url"
+                    value={hoTen}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Ngày sinh</label>
+                  <input disabled
+                    className="form-control url"
+                    value={ngaySinh}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Cấp bậc</label>
+                  <input disabled
+                    className="form-control url"
+                    value={capBac}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Chức vụ</label>
+                  <input disabled
+                    className="form-control url"
+                    value={chucVu}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Đại đội</label>
+                  <input disabled
+                    className="form-control url"
+                    value={daiDoi}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Lớp</label>
+                  <input disabled
+                    className="form-control url"
+                    value={lop}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+                <div class="form-group">
+                <label>Quê quán</label>
+                  <input disabled
+                    className="form-control url"
+                    value={queQuan}
+                    onChange={e=>setName(e.target.value)}
+                  />
+                </div>
+           
+              </Form> 
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose} className="btn-table btn-left">
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Container fluid>
         <Row>
           <Col md="12">
@@ -110,23 +158,22 @@ function TableListAdmin() {
                   <thead>
                     <tr>
                       <th className="border-0">Mã học viên</th>
-                      <th className="border-0">Loại học viên</th>
+                      {/* <th className="border-0">Loại học viên</th> */}
                       <th className="border-0">Họ tên</th>
                       <th className="border-0">Ngày sinh</th>
                       <th className="border-0">Cấp bậc</th>
                       <th className="border-0">Chức vụ</th>
                       <th className="border-0">Đại đội</th>
                       <th className="border-0">Lớp</th>
-                      <th className="border-0">Quê quán</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody >
                     {listHV &&
                       listHV.map((item) => {
                         return (
-                          <tr key={item.MaHV}>
+                          <tr key={item.MaHV}  onClick={(e)=>getTTHV(item.MaHV, item.HoTen, item.TENLOAI,  item.NgSinh, item.CapBac, item.ChucVu, item.TenDD, item.TenLop, item.QueQuan)}>
                             <td>{item.MaHV}</td>
-                            <td>{item.TENLOAI}</td>
+                            {/* <td>{item.TENLOAI}</td> */}
                             {/* <td>{item.PERSONID}</td> */}
                             <td>{item.HoTen}</td>
                             <td>{item.NgSinh}</td>
@@ -134,7 +181,15 @@ function TableListAdmin() {
                             <td>{item.ChucVu}</td>
                             <td>{item.TenDD}</td>
                             <td>{item.TenLop}</td>
-                            <td>{item.QueQuan}</td>
+                            <td>
+                            <Button
+                                type="button"
+                                className="btn-table btn-left"
+                                onClick={(e) => getMaHV(item.id)}
+                              >
+                                Thêm DSDK
+                              </Button>
+                            </td>
                             {/* <td>
                               <Button type="button" onClick={()=>goDetail()}>
                                 Detail
