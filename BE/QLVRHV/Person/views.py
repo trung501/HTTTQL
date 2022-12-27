@@ -87,7 +87,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-list-hoc-vien')
     def get_list_hoc_vien(self, request):
         """
-        API này dùng để lấy danh sách học viên của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào.
+        API này dùng để lấy danh sách học viên của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào. KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
         """
         page = request.query_params.get('page')
         size = request.query_params.get('size')
@@ -140,7 +140,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-info-hoc-vien-by-id')
     def get_info_hoc_vien_by_id(self, request):
         """
-        API này dùng để tìm kiếm theo mã học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). 
+        API này dùng để tìm kiếm theo mã học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
         """
         donViID = str(request.query_params.get('donViID'))
         maHV = str(request.query_params.get('maHV'))
@@ -422,7 +422,15 @@ class PersonViewSet(viewsets.ViewSet):
                 data_dang_ky= obj[0]
             if  abs(int(data_dang_ky["TRANGTHAIXD"])) > abs(xet_duyet):
                 return Response(data={"status": False}, status=status.HTTP_304_NOT_MODIFIED)
-          
+
+            maHV=data_dang_ky["MaHV"]
+            query_string = f"SELECT * FROM HOCVIEN WHERE MaHV = %s"
+            obj = generics_cursor.getDictFromQuery(query_string, [maHV])
+            if len(obj) > 0:
+                hocvien= obj[0]
+                maKhuVuc= int(hocvien["KHUVUC"])
+            if  (maKhuVuc == 0 or maKhuVuc ==3) and roleId != ACADEMY_ROLE:
+                return Response(data={"status": False}, status=status.HTTP_304_NOT_MODIFIED)
             query_string = f'UPDATE "DSDANGKY" SET TRANGTHAIXD= {xet_duyet} WHERE STT = {STT_dang_ky}'
             with connection.cursor() as cursor:
                 cursor.execute(query_string, [])
