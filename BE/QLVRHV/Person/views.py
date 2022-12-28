@@ -836,6 +836,33 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_SttGiayToRN], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-giay-to-RN-hoc-vien-by-stt')
+    def get_giay_to_RN_hoc_vien_by_stt(self, request):
+        """
+        API này dùng để thông tin giấy tờ ra ngoài qua số thứ tự giấy tờ ra ngoài.
+        """
+        sttGiayToRN = request.query_params.get('sttGiayToRN')
+
+        try:
+            query_string = f"SELECT * FROM HV_GIAYTORN \
+                            LEFT JOIN GIAYTORN ON GIAYTORN.MaLoai = HV_GIAYTORN.MaLoai  \
+                            LEFT JOIN DSDANGKY ON DSDANGKY.STT = HV_GIAYTORN.STTDaDuyet    \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE TRANGTHAIXD > 0 AND STTGiayTo= %s  "
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [sttGiayToRN])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT, required=None,
         properties={
@@ -1004,6 +1031,7 @@ class VeBinhViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
+
 
     @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-ra-ngoai-chua-vao')
