@@ -760,6 +760,42 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
 
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween,sw_page,sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-giay-to-RN-hoc-vien')
+    def get_list_giay_to_RN_hoc_vien(self, request):
+        """
+        API này dùng để lấy danh sách các giấy tờ ra ngoài của học viên trong một khoảng thời gian của một đơn vị nào đó.
+        """
+        donViID = request.query_params.get('donViID')
+        timeBetween = request.query_params.get('timeBetween')
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        if timeBetween is None:
+            timeBetween = datetime.now().strftime("%d-%m-%Y")
+        time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
+        try:
+            query_string = f"SELECT * FROM HV_GIAYTORN \
+                            LEFT JOIN GIAYTORN ON GIAYTORN.MaLoai = HV_GIAYTORN.MaLoai  \
+                            LEFT JOIN DSDANGKY ON DSDANGKY.STT = HV_GIAYTORN.STTDaDuyet    \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE TRANGTHAIXD > 0 AND \
+                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
 class VeBinhViewSet(viewsets.ViewSet):
     """
     Interact with UserCam
