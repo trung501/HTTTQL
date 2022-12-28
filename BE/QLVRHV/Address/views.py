@@ -96,7 +96,7 @@ class AddressViewSet(viewsets.ViewSet):
                         if lop['MaLop'] is not None:
                             list_don_vi[tieu_doan][dai_doi['MaDaiDoi']].append(lop['MaLop'])
         level=0
-        roleId=GUARDSMAN_ROLE
+
         if roleId == GUARDSMAN_ROLE or roleId == ACADEMY_ROLE:
             output=list_don_vi
             level=4
@@ -109,7 +109,6 @@ class AddressViewSet(viewsets.ViewSet):
         elif roleId == CLASS_ROLE:
             output = address_user['MaLop'] 
             level=1
-
         result = []
         if isinstance(output, dict):
             for k,v in output.items():
