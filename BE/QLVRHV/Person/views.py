@@ -29,7 +29,6 @@ class VeBinhPermission(custom_permission.CustomPermissions):
         super().__init__()
 
     def get_allowed_methods(self, CODE_VIEW):
-        CODE_VIEW=GUARDSMAN_ROLE
         if int(CODE_VIEW) == GUARDSMAN_ROLE:
             return ['GET','POST','PUT','DELETE']
         if int(CODE_VIEW) > NO_ROLE: # role admin
