@@ -643,7 +643,7 @@ class PersonViewSet(viewsets.ViewSet):
                             LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
-                             WHERE TRANGTHAIXD > 0 AND \
+                            WHERE TRANGTHAIXD < 0 AND \
                             (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
                             AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
@@ -676,7 +676,7 @@ class PersonViewSet(viewsets.ViewSet):
                             LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
-                             WHERE TRANGTHAIXD > 0 AND \
+                             WHERE TRANGTHAIXD = 0 AND \
                             (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
                             AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
