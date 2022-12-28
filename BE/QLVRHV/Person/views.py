@@ -47,6 +47,8 @@ class PersonViewSet(viewsets.ViewSet):
         name='nameHV', type=openapi.TYPE_STRING, description="Tên học viên", default="Anh", in_=openapi.IN_QUERY)    
     sw_SttDangKy = openapi.Parameter(
         name='sttDangKy', type=openapi.TYPE_INTEGER, description="Số thứ tự đăng ký", default=15, in_=openapi.IN_QUERY)
+    sw_SttCamTrai = openapi.Parameter(
+        name='sttCamTrai', type=openapi.TYPE_INTEGER, description="Số thứ tự cấm trại", default=15, in_=openapi.IN_QUERY)
 
     get_list_person_response = {
         status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -279,6 +281,64 @@ class PersonViewSet(viewsets.ViewSet):
                 print(rows_affected)
             if rows_affected == 0:
                 return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='put', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'reason': openapi.Schema(type=openapi.TYPE_STRING, description="Lý di cấm trại", default="Vi phạm tác phong"),
+            'time_start': openapi.Schema(type=openapi.TYPE_STRING, default='15-11-2022'),
+            'time_end': openapi.Schema(type=openapi.TYPE_STRING, default='27-11-2022'),
+            'STT': openapi.Schema(type=openapi.TYPE_INTEGER, default=15),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['PUT'], detail=False, url_path='put-thay-doi-thong-tin-cam-trai')
+    def put_thay_doi_thong_tin_cam_trai(self, request):
+        """
+        API này dùng để thêm học viên ra ngoài, chỉ tài khoản có quyền từ đại đội trở lên mới thêm được.
+        """
+        dataDict = request.data
+        STT = dataDict.get("STT")
+        timeStart = dataDict.get("time_start")
+        timeEnd = dataDict.get("time_end")
+        reason = dataDict.get("reason")
+        roleId = request.user.roleID
+        if roleId < COMPANY_ROLE:
+            return Response(data={}, status=status.HTTP_304_NOT_MODIFIED)
+        try:
+            timeStart = datetime.strptime(timeStart, "%d-%m-%Y").strftime("%Y-%m-%d")
+            timeEnd = datetime.strptime(timeEnd, "%d-%m-%Y").strftime("%Y-%m-%d")    
+
+            query_string = f'UPDATE QUYETDINHCAMTRAI SET TG_BatDau = %s, TG_KetThuc = %s, LIDO = %s WHERE STT = %s;'
+            param = [timeStart,timeEnd,reason,STT]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='delete', manual_parameters=[sw_SttCamTrai], responses=get_list_person_response)
+    @action(methods=['DELETE'], detail=False, url_path='delete-cam-trai')
+    def delete_cam_trai(self, request):
+        """
+        API này dùng để xóa một yêu cầu đăng ký ra ngoài. Để xóa được, học viên đăng ký ra ngoài phải chưa được xét duyệt.
+        """
+        sttCamTrai = request.query_params.get('sttCamTrai')
+        try:
+            query_string = f"DELETE FROM QUYETDINHCAMTRAI WHERE  STT  = %s"
+            param = [sttCamTrai]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)            
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
