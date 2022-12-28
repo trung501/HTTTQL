@@ -248,6 +248,44 @@ class PersonViewSet(viewsets.ViewSet):
     @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT, required=None,
         properties={
+            'reason': openapi.Schema(type=openapi.TYPE_STRING, description="Lý di cấm trại", default="Vi phạm tác phong"),
+            'time_start': openapi.Schema(type=openapi.TYPE_STRING, default='15-11-2022'),
+            'time_end': openapi.Schema(type=openapi.TYPE_STRING, default='27-11-2022'),
+            'ma_HV': openapi.Schema(type=openapi.TYPE_STRING, default='202104043'),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-them-hoc-vien-cam-trai')
+    def post_them_hoc_vien_cam_trai(self, request):
+        """
+        API này dùng để thêm học viên ra ngoài, chỉ tài khoản có quyền từ đại đội trở lên mới thêm được.
+        """
+        dataDict = request.data
+        ma_HV = dataDict.get("ma_HV")
+        timeStart = dataDict.get("time_start")
+        timeEnd = dataDict.get("time_end")
+        reason = dataDict.get("reason")
+        roleId = request.user.roleID
+        if roleId < COMPANY_ROLE:
+            return Response(data={}, status=status.HTTP_304_NOT_MODIFIED)
+        try:
+            timeStart = datetime.strptime(timeStart, "%d-%m-%Y").strftime("%Y-%m-%d")
+            timeEnd = datetime.strptime(timeEnd, "%d-%m-%Y").strftime("%Y-%m-%d")    
+
+            query_string = f'INSERT INTO QUYETDINHCAMTRAI("MaHV","TG_BatDau","TG_KetThuc","LIDO") VALUES (%s,%s,%s,%s);'
+            param = [ma_HV,timeStart,timeEnd,reason]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
             'hinh_thuc_RN': openapi.Schema(type=openapi.TYPE_INTEGER, description="0 là tranh thủ,1 là ra ngoài", default=1),
             'dia_diem': openapi.Schema(type=openapi.TYPE_STRING, description="Địa điểm", default="Hà Nội"),
             'time_start': openapi.Schema(type=openapi.TYPE_STRING, default='2022-11-11 16:30'),
@@ -304,7 +342,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['PUT'], detail=False, url_path='post-thay_doi-thong-tin-dang-ky')
     def put_thay_doi_thong_tin_dang_ky(self, request):
         """
-        API này dùng để đăng ký học viên ra ngoài. Mặc định trái thái xét duyệt sẽ là 0. Đối với hình thức ra ngoài, nhập 0 nếu là tranh thủ, nhập 1 nếu là ra ngoài. 
+        API này dùng để  thay đổi thông tin học viên ra ngoài. Đối với hình thức ra ngoài, nhập 0 nếu là tranh thủ, nhập 1 nếu là ra ngoài. 
         """
         dataDict = request.data
         try:
