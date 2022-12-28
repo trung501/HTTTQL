@@ -69,6 +69,8 @@ class PersonViewSet(viewsets.ViewSet):
         name='sttCamTrai', type=openapi.TYPE_INTEGER, description="Số thứ tự cấm trại", default=15, in_=openapi.IN_QUERY)
     sw_MaLoaiGiayToRN = openapi.Parameter(
         name='maLoaiGiayToRN', type=openapi.TYPE_INTEGER, description="Mã loại giấy tờ ra ngoài", default=15, in_=openapi.IN_QUERY)
+    sw_SttGiayToRN = openapi.Parameter(
+        name='sttGiayToRN', type=openapi.TYPE_INTEGER, description="Số thứ tự giấy tờ ra ngoài", default=15, in_=openapi.IN_QUERY)
 
     get_list_person_response = {
         status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -795,6 +797,54 @@ class PersonViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'ma_loai': openapi.Schema(type=openapi.TYPE_INTEGER,description="Mã loại giấy tờ"),
+            'stt_da_duyet': openapi.Schema(type=openapi.TYPE_INTEGER,description="Số thứ tự trong danh sách học viên được duyệt"),
+            'so_ve': openapi.Schema(type=openapi.TYPE_INTEGER,description="Mã số vé"),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-tao-giay-to-RN-hoc-vien')
+    def post_tao_giay_to_RN_hoc_vien(self, request):
+        """
+        API này dùng để thêm loại giấy tờ ra ngoài.
+        """
+        dataDict = request.data
+        ma_loai = dataDict.get("ma_loai")       
+        stt_da_duyet = dataDict.get("stt_da_duyet")       
+        so_ve = dataDict.get("so_ve")       
+        try:             
+            query_string = f'INSERT INTO HV_GIAYTORN("MaLoai","STTDaDuyet","SoVe") VALUES (%s,%s,%s)'
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, [ma_loai,stt_da_duyet,so_ve])
+                rows_affected = cursor.rowcount
+            if rows_affected == 0:
+                return Response(data={"status": False,"msg":"Có lỗi xảy ra"}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True,"msg":"Tạo giấy tờ thành công"}, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(method='delete', manual_parameters=[sw_SttGiayToRN], responses=get_list_person_response)
+    @action(methods=['DELETE'], detail=False, url_path='delete-giay-to-RN-hoc-vien')
+    def delete_giay_to_RN_hoc_vien(self, request):
+        """
+        API này dùng để xóa một yêu cầu đăng ký ra ngoài. Để xóa được, học viên đăng ký ra ngoài phải chưa được xét duyệt.
+        """
+        sttGiayToRN = request.query_params.get('sttGiayToRN')
+        try:
+            query_string = f"DELETE FROM HV_GIAYTORN WHERE STTGiayTo = %s"
+            param = [sttGiayToRN]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)            
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
 
 class VeBinhViewSet(viewsets.ViewSet):
     """
