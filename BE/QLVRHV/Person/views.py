@@ -53,6 +53,10 @@ class PersonViewSet(viewsets.ViewSet):
         name='donViID', type=openapi.TYPE_STRING, description="Mã đơn vị ( lớp, đại đội, tiểu đoàn)", default="DD155", in_=openapi.IN_QUERY)
     sw_MaHV = openapi.Parameter(
         name='maHV', type=openapi.TYPE_STRING, description="MaHV", default="201901058", in_=openapi.IN_QUERY)
+    sw_PersonId = openapi.Parameter(
+        name='personId', type=openapi.TYPE_STRING, default=1, in_=openapi.IN_QUERY)
+    sw_PersonName = openapi.Parameter(
+        name='personName', type=openapi.TYPE_STRING, description="Tên", default="Anh", in_=openapi.IN_QUERY) 
     sw_TimeStart = openapi.Parameter(
         name='timeStart', type=openapi.TYPE_STRING, description="Thời gian đi", default="12-08-2022", in_=openapi.IN_QUERY)
     sw_TimeBetween = openapi.Parameter(
@@ -127,6 +131,30 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page, sw_size, sw_DonViID], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-person')
+    def get_list_person(self, request):
+        """
+        API này dùng để lấy danh sách học viên của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào. KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        donViID = str(request.query_params.get('donViID'))
+        try:
+            query_string = "SELECT * FROM PERSON \
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID, donViID, donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID,sw_NameHV], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-info-hoc-vien-by-name')
     def get_info_hoc_vien_by_name(self, request):
@@ -148,6 +176,31 @@ class PersonViewSet(viewsets.ViewSet):
                             PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [f"%{nameHV}%",donViID, donViID, donViID])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID,sw_PersonName], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-info-person-by-name')
+    def get_info_person_by_name(self, request):
+        """
+        API này dùng để tìm kiếm theo tên học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). 
+        """
+        donViID = str(request.query_params.get('donViID'))
+        personName = str(request.query_params.get('personName'))
+
+        try:
+            query_string = "SELECT * FROM PERSON \
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            WHERE LOWER(PERSON.HoTen) LIKE LOWER(%s) AND \
+                            PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [f"%{personName}%",donViID, donViID, donViID])
             if obj is None:
                 return Response(data={}, status=status.HTTP_204_NO_CONTENT)
         except:
@@ -175,6 +228,31 @@ class PersonViewSet(viewsets.ViewSet):
                             PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [maHV,donViID, donViID, donViID])
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID,sw_PersonId], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-info-person-by-id')
+    def get_info_person_by_id(self, request):
+        """
+        API này dùng để tìm kiếm theo mã học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
+        """
+        donViID = str(request.query_params.get('donViID'))
+        personId = str(request.query_params.get('personId'))
+
+        try:
+            query_string = "SELECT * FROM PERSON \
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            WHERE PERSON.PersonID = %s AND \
+                            PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [personId,donViID, donViID, donViID])
             if obj is None:
                 return Response(data={}, status=status.HTTP_204_NO_CONTENT)
         except:
