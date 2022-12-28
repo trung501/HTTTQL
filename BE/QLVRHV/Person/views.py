@@ -291,6 +291,48 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STT': openapi.Schema(type=openapi.TYPE_INTEGER, default=23),
+            'hinh_thuc_RN': openapi.Schema(type=openapi.TYPE_INTEGER, description="0 là tranh thủ,1 là ra ngoài", default=1),
+            'dia_diem': openapi.Schema(type=openapi.TYPE_STRING, description="Địa điểm", default="Hà Nội"),
+            'time_start': openapi.Schema(type=openapi.TYPE_STRING, default='2022-11-11 16:30'),
+            'time_end': openapi.Schema(type=openapi.TYPE_STRING, default='2022-11-13 18:00'),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-thay_doi-thong-tin-dang-ky')
+    def post_thay_doi_thong_tin_dang_ky(self, request):
+        """
+        API này dùng để đăng ký học viên ra ngoài. Mặc định trái thái xét duyệt sẽ là 0. Đối với hình thức ra ngoài, nhập 0 nếu là tranh thủ, nhập 1 nếu là ra ngoài. 
+        """
+        dataDict = request.data
+        try:
+            hinhThucRN = int(dataDict.get("hinh_thuc_RN"))
+            if hinhThucRN == 0:
+                hinhThucRN = "Tranh thủ"
+            else:
+                hinhThucRN = "Ra ngoài"
+
+            STT = dataDict.get("STT")
+            diaDiem = dataDict.get("dia_diem")
+            timeStart = dataDict.get("time_start")
+            timeEnd = dataDict.get("time_end")
+            timeStart = datetime.strptime(timeStart, '%Y-%m-%d %H:%M')
+            timeEnd = datetime.strptime(timeEnd, '%Y-%m-%d %H:%M')         
+
+            query_string = f'UPDATE DSDANGKY SET HinhThucRN = %s, DiaDiem = %s, ThoiGianDi = %s, ThoiGianVe = %s, TRANGTHAIXD = 0 WHERE STT = %s AND TRANGTHAIXD=0;'
+            param = [hinhThucRN, diaDiem, timeStart, timeEnd,STT]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID, sw_TimeBetween], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-list-dang-ky')
     def get_list_dang_ky(self, request):
