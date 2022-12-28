@@ -126,7 +126,8 @@ class PersonViewSet(viewsets.ViewSet):
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
                             LEFT JOIN LOAIHOCVIEN ON LOAIHOCVIEN.MALOAI = HOCVIEN.LOAIHOCVIEN \
-                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
+                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)\
+                            ORDER BY DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan,HOCVIEN.LOAIHOCVIEN "
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
             if obj is None:
@@ -150,7 +151,8 @@ class PersonViewSet(viewsets.ViewSet):
                             LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
-                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s)"
+                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s) \
+                            ORDER BY DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
             if obj is None:
@@ -270,7 +272,8 @@ class PersonViewSet(viewsets.ViewSet):
         API này dùng lấy một list danh sách kết quả rèn luyện học viên sắp xếp theo thời gian giảm dần
         """
         maHV = str(request.query_params.get('maHV'))
-
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
         try:
             query_string = "SELECT HOCVIEN.MAHV,HOCVIEN.personID,HoTen,NgSinh,PERSON.DonViID,ThoiGian,PhanLoaiRL FROM HV_RENLUYEN  \
                             LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = HV_RENLUYEN.MaHV \
@@ -281,7 +284,7 @@ class PersonViewSet(viewsets.ViewSet):
                             ORDER BY ThoiGian DESC"
             print(query_string)
             obj = generics_cursor.getDictFromQuery(
-                query_string, [maHV,])
+                query_string, [maHV], page=page, size=size)
             if obj is None:
                 return Response(data={}, status=status.HTTP_204_NO_CONTENT)
         except:
@@ -329,12 +332,19 @@ class PersonViewSet(viewsets.ViewSet):
         time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
         print(time_start, time_end)
         try:
-            query_string = f"SELECT * FROM QUYETDINHCAMTRAI WHERE \
-                            ((TG_BatDau BETWEEN '{time_start}'AND '{time_end}') OR \
+            query_string = f"SELECT * FROM QUYETDINHCAMTRAI \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = QUYETDINHCAMTRAI.MaHV \
+                            LEFT JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID \
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID  \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE ((TG_BatDau BETWEEN '{time_start}'AND '{time_end}') OR \
                             (TG_KetThuc BETWEEN '{time_start}'AND '{time_end}') OR  \
                             (TG_BatDau <= '{time_start}' AND TG_KetThuc >= '{time_end}'))\
-                            AND MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
-                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
+                            AND HOCVIEN.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+                            AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))\
+                            ORDER BY DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan,TG_BatDau"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
             if obj is None:
@@ -1001,8 +1011,6 @@ class VeBinhViewSet(viewsets.ViewSet):
         """
         page = request.query_params.get('page')
         size = request.query_params.get('size')
-        timeStart = request.query_params.get('timeStart')
-        timeEnd = request.query_params.get('timeEnd')
         try:
             query_string = f'SELECT * FROM VAORACONG \
                             LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
