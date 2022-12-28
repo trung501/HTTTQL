@@ -1,14 +1,11 @@
 import React, { useState, useContext } from "react";
-import { useEffect } from "react";
-// import apiAdmin from "../service/Admin/apiAdmin";
+import { useEffect,useRef } from "react";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
-// import DateTimePicker from 'react-datetime-picker';
 import { GlobalState } from "layouts/Slidenav";
 import "../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Modal from "react-bootstrap/Modal";
 import "./style.css";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -30,48 +27,95 @@ function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [STT, setSTT] = useState();
-  const [listDSCXD, setlistDS] = useState([]);
+  const [tt, setTt] = useState();
+  const [xetDuyet, setXetDuyet] = useState();
+  const [listDSCXD, setlistDSCXD] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  const ref = useRef(null)
+  const handleChange = (date) => {
+    setSelectedDate(date);
+  };
 
   useEffect(() => {
-    async function getDSDK() {
+    async function getDSCXD() {
       const day = selectedDate.getDate();
       const month = selectedDate.getMonth() + 1;
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-dang-ky/?donViID=${id}&timeBetween=${dateString}`
+        `/Person/get-list-danh-sach-chua-duoc-duyet/?donViID=${id}&timeBetween=${dateString}`
       );
-      setlistDSDK((listDSDK) => [...res.data]);
+      setlistDSCXD((listDSCXD) => [...res.data]);
     }
-    getDSDK();
+    getDSCXD();
   }, [id, selectedDate]);
-  function getMaHVShow(maHv) {
-    setShow(true);
-    setmaHV(maHV);
-  }
 
- async function xoaDSDK(maDK){
-  const res = await axiosClient.delete(`/Person/delete-dang-ky/?sttDangKy=${maDK}`)
+
+ async function duyetDSDK(tag){
+  const data= {
+    STT_dang_ky: STT,
+    xet_duyet: xetDuyet
+  }
+  console.log(data)
+  const res = await axiosClient.post("/Person/post-xet-duyet-ra-ngoai/", data)
   if (res.status === 200) {
-    alert("Xóa thành công");
-    getDSDK()
+    tag.innerHTML = "Đã duyệt"
+    // alert("Thành công");
+    // getDSCXD()
   } else {
     alert("Đã xảy ra lỗi")
   }
  }
- const handleDelete = (maDK) => {
-  console.log(maDK)
+ async function khongDuyetDSDK(tag){
+  const data= {
+    STT_dang_ky: STT,
+    xet_duyet: xetDuyet
+  }
+  console.log(data)
+  const res = await axiosClient.post("/Person/post-xet-duyet-ra-ngoai/", data)
+  if (res.status === 200) {
+    tag.innerHTML = "Không được duyệt"
+    // alert("Thành công");
+    // getDSCXD()
+  } else {
+    alert("Đã xảy ra lỗi")
+  }
+ }
+ const handleDuyet = (event,STT) => {
+  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[6];
+  console.log(tag);
+
+
+  // setTt("Đã xét duyệt")
+  setXetDuyet(1)
+  setSTT(STT)
   confirmAlert({
-    message: 'Bạn có chắc chắn muốn xóa không?',
+    message: 'Bạn có chắc chắn DUYỆT?',
     buttons: [
       {
         label: 'Có',
-        onClick: () => xoaDSDK(maDK)
+        // onClick: () => {}
+        onClick: () => duyetDSDK(tag)
+      },
+      {
+        label: 'Không',
+        onClick: () => {}
+      }
+    ]
+  });
+};
+const handleKhongDuyet = (event,STT) => {
+  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[6];
+  console.log(tag);
+  console.log(STT)
+  setXetDuyet(-1)
+  setSTT(STT)
+  confirmAlert({
+    message: 'Bạn có chắc chắn KHÔNG DUYỆT?',
+    buttons: [
+      {
+        label: 'Có',
+        onClick: () => khongDuyetDSDK(tag)
       },
       {
         label: 'Không',
@@ -100,151 +144,9 @@ function TableListAdmin() {
         return "Không xác định";
     }
   }
-function handleEditDSDK (
-  STT,
-  HTRN,
-  DiaDiem,
-  // TGRa,
-  // TGVao,
-  // gioRa,
-  // gioVao,
-  // phutRa,
-  // phutVao
-){
-    setShowModal(true);
-    setSTT(STT)
-    setHTRN(HTRN);
-    setDiaDiem(DiaDiem);
-    // setTGRa(TGRa);
-    // setTGVao(TGVao);
-    // setHm({ ...hm, gioRa: gioRa});
-    // setHm({ ...hm, phutRa: phutRa});
-    // setHm({ ...hm, gioVao: gioVao});
-    // setHm({ ...hm, phutVao: phutVao});
-  };
-  const handleEditDSDK1 = (e) => {
-    e.preventDefault();
-    if (
-      TGRa === "" ||
-      TGVao === "" ||
-      hm.gioRa === "" ||
-      hm.gioVao === "" ||
-      hm.phutRa === "" ||
-      hm.phutVao === "" ||
-      DiaDiem === "null"
-    ) {
-      alert("Nhập thiếu nội dung");
-    } else{
-      console.log(HTRN)
-      const ngayRa = TGRa.getDate();
-    const thangRa = TGRa.getMonth() + 1;
-    const namRa = TGRa.getFullYear();
-    const ngayVao = TGVao.getDate();
-    const thangVao = TGVao.getMonth() + 1;
-    const namVao = TGVao.getFullYear();
-    const timeRa = `${namRa}-${thangRa}-${ngayRa} ${hm.gioRa}:${hm.phutRa}`;
-    const timeVao = `${namVao}-${thangVao}-${ngayVao} ${hm.gioVao}:${hm.phutVao}`;
-    const data = {
-      STT: STT,
-      dia_diem: DiaDiem,
-      hinh_thuc_RN: parseInt(HTRN, 10),
-      time_start: timeRa,
-      time_end: timeVao,
-    };
-    axiosClient.put("/Person/post-thay_doi-thong-tin-dang-ky/", data).then((res) => {
-      if (res.status === 200) {
-        alert("Chỉnh sửa thành công");
-        getDSDK()
-      } else {
-        alert("Đã xảy ra lỗi")
-      }
-    });
-    setShowModal(false);
-    }
-    
-  };
 
   return (
     <>
-      <Modal
-        style={{ transform: "none" }}
-        show={showModal}
-        onShow={handleShow}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Chỉnh sửa danh sách đăng kí</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="form-group">
-              <label>Hình thức ra ngoài</label>
-              <div>
-                <select
-                  class="form-control name-domain"
-                  onChange={(event) => setHTRN(event.target.value)}
-                >
-                  <option value="0">Tranh thủ</option>
-                  <option value="1">Ra ngoài</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Địa điểm</label>
-              <input
-                className="form-control url"
-                value={DiaDiem}
-                onChange={(e) => setDiaDiem(e.target.value)}
-              />
-            </div>
-            <div class="form-group">
-              <label>Thời gian ra</label>
-              <div style={{ display: "flex", gap: 12 }}>
-                <DatePicker
-                  dateFormat="dd/MM/yyyy"
-                  selected={TGRa}
-                  onChange={handleTimeRa}
-                />
-                <input 
-                value={hm.gioRa} 
-                placeholder="giờ" 
-                style={{ width: 120 }} 
-                onChange={(e) => setHm({...hm, gioRa:e.target.value})} />
-                <input 
-                type = "text"
-                value={hm.phutRa} 
-                placeholder="phút" 
-                style={{ width: 120 }} 
-                onChange={(e) => setHm({...hm, phutRa: e.target.value})}/>
-                </div>
-            </div>
-            <div class="form-group">
-              <label>Thời gian vào</label>
-              <div style={{ display: "flex", gap: 12 }}>
-                <DatePicker
-                  dateFormat="dd/MM/yyyy"
-                  selected={TGVao}
-                  onChange={handleTimeVao}
-                />
-                <input type="text" value={hm.gioVao} placeholder="giờ" style={{ width: 120 }} onChange={(e) => setHm({...hm, gioVao: e.target.value})}/>
-                <input type="text" value={hm.phutVao} placeholder="phút" style={{ width: 120 }} onChange={(e) => setHm({...hm, phutVao:e.target.value})}/>
-              </div>
-            </div>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={handleEditDSDK1}
-            className="btn-table btn-left"
-          >
-            Lưu thay đổi
-          </Button>
-          <Button onClick={handleClose} variant="secondary" type="submit">
-            Hủy
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <Container fluid>
         <Row>
           <Col md="12">
@@ -277,8 +179,8 @@ function handleEditDSDK (
                     </tr>
                   </thead>
                   <tbody>
-                    {listDSDK &&
-                      listDSDK.map((item) => {
+                    {listDSCXD &&
+                      listDSCXD.map((item) => {
                         return (
                           <tr key={item.STT}>
                             <td>{item.STT}</td>
@@ -292,24 +194,16 @@ function handleEditDSDK (
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
-                                onClick={(e)=>
-                                   handleEditDSDK(
-                                    item.STT,
-                                    (item.HinhThucRN==="Tranh thủ"?0:1),
-                                    item.DiaDiem
-                                    // item.TGRa,
-                                    // item.TGVao,
-
-                                   )}
+                                onClick={(e) => handleDuyet(e,item.STT)}
                               >
-                                Chỉnh sửa
+                               Duyệt
                               </Button>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
-                                onClick={(e) => handleDelete(item.STT)}
+                                onClick={(e)=> handleKhongDuyet(e,item.STT)}
                               >
-                                Xóa
+                              Không duyệt
                               </Button>
                             </td>
                           </tr>
