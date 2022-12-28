@@ -29,6 +29,7 @@ class VeBinhPermission(custom_permission.CustomPermissions):
         super().__init__()
 
     def get_allowed_methods(self, CODE_VIEW):
+        CODE_VIEW=GUARDSMAN_ROLE
         if int(CODE_VIEW) == GUARDSMAN_ROLE:
             return ['GET','POST','PUT','DELETE']
         if int(CODE_VIEW) > NO_ROLE: # role admin
@@ -846,7 +847,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['POST'], detail=False, url_path='post-tao-giay-to-RN-hoc-vien')
     def post_tao_giay_to_RN_hoc_vien(self, request):
         """
-        API này dùng để thêm loại giấy tờ ra ngoài.
+        API này dùng để thêm loại giấy tờ ra ngoài. Điền số vé nếu là thẻ gắn chip, còn không để trống.
         """
         dataDict = request.data
         ma_loai = dataDict.get("ma_loai")       
@@ -857,11 +858,12 @@ class PersonViewSet(viewsets.ViewSet):
             with connection.cursor() as cursor:
                 cursor.execute(query_string, [ma_loai,stt_da_duyet,so_ve])
                 rows_affected = cursor.rowcount
+                stt = cursor.lastrowid
             if rows_affected == 0:
                 return Response(data={"status": False,"msg":"Có lỗi xảy ra"}, status=status.HTTP_200_OK)
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(data={"status": True,"msg":"Tạo giấy tờ thành công"}, status=status.HTTP_200_OK)
+        return Response(data={"status": True,"msg":stt}, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(method='delete', manual_parameters=[sw_SttGiayToRN], responses=get_list_person_response)
     @action(methods=['DELETE'], detail=False, url_path='delete-giay-to-RN-hoc-vien')
@@ -1031,3 +1033,57 @@ class VeBinhViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STTGiayTo': openapi.Schema(type=openapi.TYPE_INTEGER,description="Số thứ tự giấy tờ ra ngoài", default=23),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-bat-dau-ra-cong')
+    def post_bat_dau_ra_cong(self, request):
+        """
+        API này dùng để  thay đổi thông tin giấy tờ ra ngoài của học viên
+        """
+        dataDict = request.data
+        try:
+            time_start = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            STTGiayTo = dataDict.get("STTGiayTo")
+            query_string = f'INSERT INTO VAORACONG("STTGiayTo","TG_Ra") VALUES (%s,%s);'
+            param = [STTGiayTo,time_start]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STTGiayTo': openapi.Schema(type=openapi.TYPE_INTEGER,description="Số thứ tự giấy tờ", default=23),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['POST'], detail=False, url_path='post-vao-cong')
+    def post_vao_cong(self, request):
+        """
+        API này dùng để  thay đổi thông tin giấy tờ ra ngoài của học viên
+        """
+        dataDict = request.data
+        try:
+            time_end = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            STTGiayTo = dataDict.get("STTGiayTo")
+            query_string = f'UPDATE VAORACONG SET TG_Vao = %s WHERE STTGiayTo= %s'
+            param = [time_end,STTGiayTo]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
