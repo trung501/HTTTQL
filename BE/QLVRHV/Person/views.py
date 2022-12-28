@@ -16,11 +16,25 @@ class PersonPermission(custom_permission.CustomPermissions):
     def __init__(self):
         super().__init__()
 
-    # def get_allowed_methods(self, username):
-    #     ## query in database here
-    #     username = username
-    #     return ['GET']
+    # def get_allowed_methods(self, CODE_VIEW):
+    #     if int(CODE_VIEW) > NO_ROLE: # role admin
+    #         return ['GET','POST','PUT','DELETE']
+    #     elif int(CODE_VIEW) == GUARDSMAN_ROLE:
+    #         return ['GET']
+    #     else:
+    #         return []
 
+class VeBinhPermission(custom_permission.CustomPermissions):
+    def __init__(self):
+        super().__init__()
+
+    def get_allowed_methods(self, CODE_VIEW):
+        if int(CODE_VIEW) == GUARDSMAN_ROLE:
+            return ['GET','POST','PUT','DELETE']
+        if int(CODE_VIEW) > NO_ROLE: # role admin
+            return ['GET']       
+        else:
+            return []
 
 # Create your views here.
 class PersonViewSet(viewsets.ViewSet):
@@ -602,3 +616,80 @@ class PersonViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True,"msg":"Xét duyệt thành công"}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-loai-giay-to')
+    def get_list_loai_giay_to(self, request):
+        """
+        API này dùng để lấy danh sách các loại giấy tờ ra ngoài.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+
+        try:
+            query_string = f"SELECT * FROM GIAYTORN"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+class VeBinhViewSet(viewsets.ViewSet):
+    """
+    Interact with UserCam
+    """
+
+    permission_classes = [VeBinhPermission]
+
+    # all swagger's parameters should be defined here
+    sw_page = openapi.Parameter(
+        name='page', type=openapi.TYPE_STRING, description="Page number", in_=openapi.IN_QUERY)
+    sw_size = openapi.Parameter(
+        name='size', type=openapi.TYPE_STRING, description="Number of results to return per page", in_=openapi.IN_QUERY)
+    sw_DonViID = openapi.Parameter(
+        name='donViID', type=openapi.TYPE_STRING, description="Mã đơn vị ( lớp, đại đội, tiểu đoàn)", default="DD155", in_=openapi.IN_QUERY)
+    sw_MaHV = openapi.Parameter(
+        name='maHV', type=openapi.TYPE_STRING, description="MaHV", default="201901058", in_=openapi.IN_QUERY)
+    sw_TimeStart = openapi.Parameter(
+        name='timeStart', type=openapi.TYPE_STRING, description="Thời gian đi", default="12-08-2022", in_=openapi.IN_QUERY)
+    sw_TimeBetween = openapi.Parameter(
+        name='timeBetween', type=openapi.TYPE_STRING, description="Time trong tuần", default="12-08-2022", in_=openapi.IN_QUERY)
+    sw_NameHV = openapi.Parameter(
+        name='nameHV', type=openapi.TYPE_STRING, description="Tên học viên", default="Anh", in_=openapi.IN_QUERY)    
+    sw_SttDangKy = openapi.Parameter(
+        name='sttDangKy', type=openapi.TYPE_INTEGER, description="Số thứ tự đăng ký", default=15, in_=openapi.IN_QUERY)
+    sw_SttCamTrai = openapi.Parameter(
+        name='sttCamTrai', type=openapi.TYPE_INTEGER, description="Số thứ tự cấm trại", default=15, in_=openapi.IN_QUERY)
+
+    get_list_person_response = {
+        status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+        status.HTTP_204_NO_CONTENT: 'NO_CONTENT',
+        status.HTTP_200_OK: 'JSON',
+    }
+
+    post_list_person_response = {
+        status.HTTP_500_INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+        status.HTTP_304_NOT_MODIFIED: 'NOT_MODIFIED',
+        status.HTTP_200_OK: 'JSON',
+    }
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-loai-loi_vi_pham')
+    def get_list_loai_loi_vi_pham(self, request):
+        """
+        API này dùng để lấy danh sách các loại giấy tờ ra ngoài.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+
+        try:
+            query_string = f"SELECT * FROM LOIVIPHAM"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
