@@ -135,7 +135,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-list-person')
     def get_list_person(self, request):
         """
-        API này dùng để lấy danh sách học viên của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào. KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
+        API này dùng để lấy danh sách person của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào. KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
         """
         page = request.query_params.get('page')
         size = request.query_params.get('size')
@@ -186,7 +186,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-info-person-by-name')
     def get_info_person_by_name(self, request):
         """
-        API này dùng để tìm kiếm theo tên học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). 
+        API này dùng để tìm kiếm theo tên một người của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). 
         """
         donViID = str(request.query_params.get('donViID'))
         personName = str(request.query_params.get('personName'))
@@ -238,7 +238,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False, url_path='get-info-person-by-id')
     def get_info_person_by_id(self, request):
         """
-        API này dùng để tìm kiếm theo mã học viên của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
+        API này dùng để tìm kiếm theo personID của một đơn vị cụ thể nào đó( có thể là lớp,đại đội, tiểu đoàn). KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
         """
         donViID = str(request.query_params.get('donViID'))
         personId = str(request.query_params.get('personId'))
