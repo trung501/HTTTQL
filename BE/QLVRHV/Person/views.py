@@ -648,16 +648,16 @@ class VeBinhViewSet(viewsets.ViewSet):
         name='page', type=openapi.TYPE_STRING, description="Page number", in_=openapi.IN_QUERY)
     sw_size = openapi.Parameter(
         name='size', type=openapi.TYPE_STRING, description="Number of results to return per page", in_=openapi.IN_QUERY)
+    sw_TimeStartGo = openapi.Parameter(
+        name='timeStartGo', type=openapi.TYPE_STRING, description="Thời gian đi", default="2022-11-11 16:30", in_=openapi.IN_QUERY)
+    sw_TimeStart = openapi.Parameter(
+        name='timeStart', type=openapi.TYPE_STRING, description="Thời gian bắt đầu", default="2022-11-11", in_=openapi.IN_QUERY)
+    sw_TimeEnd = openapi.Parameter(
+        name='timeEnd', type=openapi.TYPE_STRING, description="Thời gian kết thúc", default="2022-11-11", in_=openapi.IN_QUERY)
     sw_DonViID = openapi.Parameter(
         name='donViID', type=openapi.TYPE_STRING, description="Mã đơn vị ( lớp, đại đội, tiểu đoàn)", default="DD155", in_=openapi.IN_QUERY)
     sw_MaHV = openapi.Parameter(
         name='maHV', type=openapi.TYPE_STRING, description="MaHV", default="201901058", in_=openapi.IN_QUERY)
-    sw_TimeStart = openapi.Parameter(
-        name='timeStart', type=openapi.TYPE_STRING, description="Thời gian đi", default="12-08-2022", in_=openapi.IN_QUERY)
-    sw_TimeBetween = openapi.Parameter(
-        name='timeBetween', type=openapi.TYPE_STRING, description="Time trong tuần", default="12-08-2022", in_=openapi.IN_QUERY)
-    sw_NameHV = openapi.Parameter(
-        name='nameHV', type=openapi.TYPE_STRING, description="Tên học viên", default="Anh", in_=openapi.IN_QUERY)    
     sw_SttDangKy = openapi.Parameter(
         name='sttDangKy', type=openapi.TYPE_INTEGER, description="Số thứ tự đăng ký", default=15, in_=openapi.IN_QUERY)
     sw_SttCamTrai = openapi.Parameter(
@@ -686,6 +686,68 @@ class VeBinhViewSet(viewsets.ViewSet):
 
         try:
             query_string = f"SELECT * FROM LOIVIPHAM"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size,sw_TimeStart,sw_TimeEnd], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-vao-ra-cong')
+    def get_list_danh_sach_vao_ra_cong(self, request):
+        """
+        API này dùng để lấy danh sách học viên vào ra cổng trong khoảng ngày nào đó.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        timeStart = request.query_params.get('timeStart')
+        timeEnd = request.query_params.get('timeEnd')
+        try:
+            query_string = f'SELECT * FROM VAORACONG \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_GIAYTORN.STTDaDuyet = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE "{timeStart}" <= DATE(TG_RA) AND DATE(TG_RA) <= "{timeEnd}" \
+                            ORDER BY TG_Ra DESC'
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-ra-ngoai-chua-vao')
+    def get_list_danh_sach_ra_ngoai_chua_vao(self, request):
+        """
+        API này dùng để lấy danh sách học viên vào đi ra ngoài nhưng chưa vào.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        timeStart = request.query_params.get('timeStart')
+        timeEnd = request.query_params.get('timeEnd')
+        try:
+            query_string = f'SELECT * FROM VAORACONG \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_GIAYTORN.STTDaDuyet = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE TG_VAO = "" OR TG_Vao IS NULL \
+                            ORDER BY TG_Ra DESC'
             obj = generics_cursor.getDictFromQuery(
                 query_string, [], page=page, size=size)
             if obj is None:
