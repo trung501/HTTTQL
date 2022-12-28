@@ -830,7 +830,7 @@ class PersonViewSet(viewsets.ViewSet):
     @action(methods=['DELETE'], detail=False, url_path='delete-giay-to-RN-hoc-vien')
     def delete_giay_to_RN_hoc_vien(self, request):
         """
-        API này dùng để xóa một yêu cầu đăng ký ra ngoài. Để xóa được, học viên đăng ký ra ngoài phải chưa được xét duyệt.
+        API này dùng để xóa một giấy tờ ra ngoài của học viên
         """
         sttGiayToRN = request.query_params.get('sttGiayToRN')
         try:
@@ -842,6 +842,37 @@ class PersonViewSet(viewsets.ViewSet):
                 print(rows_affected)
             if rows_affected == 0:
                 return Response(data={"status": False}, status=status.HTTP_200_OK)            
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='put', manual_parameters=[], request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, required=None,
+        properties={
+            'STT': openapi.Schema(type=openapi.TYPE_INTEGER,description="Số thứ tự giấy tờ", default=23),
+            'maLoaiGiayTo': openapi.Schema(type=openapi.TYPE_INTEGER, description="Mã loại giấy tờ", default=1),
+            'SoVe': openapi.Schema(type=openapi.TYPE_INTEGER,description="Số vé", default=23),
+        }
+    ), responses=post_list_person_response)
+    @action(methods=['PUT'], detail=False, url_path='put-thay-doi-giay-to-RN-HV')
+    def put_thay_doi_giay_to_RN_HV(self, request):
+        """
+        API này dùng để  thay đổi thông tin giấy tờ ra ngoài của học viên
+        """
+        dataDict = request.data
+        try:
+            STT = int(dataDict.get("STT"))
+            maLoaiGiayTo = int(dataDict.get("maLoaiGiayTo"))
+            SoVe = int(dataDict.get("SoVe"))            
+
+            query_string = f'UPDATE HV_GIAYTORN SET MaLoai = %s, STTDaDuyet = %s, SoVe = %s WHERE STTGiayTo = %s;'
+            param = [maLoaiGiayTo,SoVe,STT]
+            with connection.cursor() as cursor:
+                cursor.execute(query_string, param)
+                rows_affected = cursor.rowcount
+                print(rows_affected)
+            if rows_affected == 0:
+                return Response(data={"status": False}, status=status.HTTP_200_OK)
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
