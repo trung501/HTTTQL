@@ -861,11 +861,11 @@ class PersonViewSet(viewsets.ViewSet):
         """
         dataDict = request.data
         try:
-            STT = int(dataDict.get("STT"))
-            maLoaiGiayTo = int(dataDict.get("maLoaiGiayTo"))
-            SoVe = int(dataDict.get("SoVe"))            
+            STT = dataDict.get("STT")
+            maLoaiGiayTo = dataDict.get("maLoaiGiayTo")
+            SoVe = dataDict.get("SoVe")           
 
-            query_string = f'UPDATE HV_GIAYTORN SET MaLoai = %s, STTDaDuyet = %s, SoVe = %s WHERE STTGiayTo = %s;'
+            query_string = f'UPDATE HV_GIAYTORN SET MaLoai = %s, SoVe = %s WHERE STTGiayTo = %s;'
             param = [maLoaiGiayTo,SoVe,STT]
             with connection.cursor() as cursor:
                 cursor.execute(query_string, param)
