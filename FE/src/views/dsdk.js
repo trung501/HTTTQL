@@ -10,7 +10,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-bootstrap/Modal";
 import "./style.css";
-
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 // react-bootstrap components
 import {
   Badge,
@@ -39,10 +40,10 @@ function TableListAdmin() {
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
   const [hm, setHm] = useState({
-    gioRa: 0,
-    gioVao: 0,
-    phutRa: 0,
-    phutVao: 0
+    gioRa: "",
+    gioVao: "",
+    phutRa: "",
+    phutVao: ""
   });
 
   const handleChange = (date) => {
@@ -60,20 +61,45 @@ function TableListAdmin() {
       const month = selectedDate.getMonth() + 1;
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
-      console.log(dateString);
       const res = await axiosClient.get(
         `/Person/get-list-dang-ky/?donViID=${id}&timeBetween=${dateString}`
       );
-      console.log(res);
       setlistDSDK((listDSDK) => [...res.data]);
-      console.log(listDSDK);
     }
     getDSDK();
   }, [id, selectedDate]);
-  function getMaHV(maHv) {
+  function getMaHVShow(maHv) {
     setShow(true);
     setmaHV(maHV);
   }
+  function getMaHV(maHv) {
+    setmaHV(maHV);
+  }
+
+ async function xoaDSDK(maDK){
+  const res = await axiosClient.delete(`/Person/delete-dang-ky/?sttDangKy=${maDK}`)
+  if (res.status === 200) {
+    alert("Xóa thành công");
+  } else {
+    alert("Đã xảy ra lỗi")
+  }
+ }
+ const handleDelete = (maDK) => {
+  console.log(maDK)
+  confirmAlert({
+    message: 'Bạn có chắc chắn muốn xóa không?',
+    buttons: [
+      {
+        label: 'Có',
+        onClick: () => xoaDSDK(maDK)
+      },
+      {
+        label: 'Không',
+        onClick: () => {}
+      }
+    ]
+  });
+};
   function getTrangThai(TRANGTHAIXD) {
     switch (TRANGTHAIXD) {
       case 0:
@@ -95,7 +121,6 @@ function TableListAdmin() {
     }
   }
   const handleAddDSDK = (e) => {
-    console.log("thêm");
     e.preventDefault();
     setShowModal(true);
   };
@@ -109,11 +134,6 @@ function TableListAdmin() {
     const namVao = TGVao.getFullYear();
     const timeRa = `${namRa}-${thangRa}-${ngayRa} ${hm.gioRa}:${hm.phutRa}`;
     const timeVao = `${namVao}-${thangVao}-${ngayVao} ${hm.gioVao}:${hm.phutVao}`;
-    console.log(HTRN)
-    console.log(DiaDiem)
-    console.log(timeRa)
-    console.log(timeVao)
-    console.log(maHV)
     const data = {
       hinh_thuc_RN: parseInt(HTRN, 10),
       dia_diem: DiaDiem,
@@ -121,7 +141,13 @@ function TableListAdmin() {
       time_end: timeVao,
       ma_HV: maHV,
     };
-    axiosClient.post("/Person/post-dang-ky-ra-ngoai/", data).then((res) => {console.log(res)});
+    axiosClient.post("/Person/post-dang-ky-ra-ngoai/", data).then((res) => {
+      console.log(uyên)
+      // console.log(res["status"])
+      // if(res.sta){
+      //   alert("Thêm thành công")
+      // }
+    });
     setShowModal(false);
   };
   async function deleteItem(id) {
@@ -143,7 +169,7 @@ function TableListAdmin() {
         onHide={handleClose}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Thêm danh sách đăng kí</Modal.Title>
+          <Modal.Title>Chỉnh sửa danh sách đăng kí</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -164,7 +190,6 @@ function TableListAdmin() {
               <input
                 className="form-control url"
                 value={DiaDiem}
-                placeholder="dịa điểm"
                 onChange={(e) => setDiaDiem(e.target.value)}
               />
             </div>
@@ -230,19 +255,16 @@ function TableListAdmin() {
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
                 <Col md="3">
+                  <div style={{ display: "flex", gap: 12 }}>
+                  <p>Ngày trong tuần</p>
                   <DatePicker
                     dateFormat="dd/MM/yyyy"
                     selected={selectedDate}
                     onChange={handleChange}
                   />
+                  </div>
+                  
                 </Col>
-                <button
-                  type="button"
-                  class="btn btn-add-target  btn-table btn-left"
-                  onClick={handleAddDSDK}
-                >
-                  THÊM MỚI
-                </button>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
@@ -274,14 +296,14 @@ function TableListAdmin() {
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
-                                onClick={(e) => getMaHV(item.id)}
+                                onClick={(e) => getMaHVShow(item.id)}
                               >
                                 Chỉnh sửa
                               </Button>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
-                                onClick={(e) => getMaHV(item.id)}
+                                onClick={(e) => handleDelete(item.STT)}
                               >
                                 Xóa
                               </Button>
