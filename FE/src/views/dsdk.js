@@ -37,26 +37,26 @@ function TableListAdmin() {
     // console.log('You clicked submit.');
     // console.log(id)
     await axiosClient.delete(`users/${id}/delete`);
-      setlistDSDK(
-        listUsers.filter((user) => {
-          return user.id !== id;
-        })
-      )
+    setlistDSDK(
+      listUsers.filter((user) => {
+        return user.id !== id;
+      })
+    )
   }
 
-  
-    // function deleteItem(id) {
-    //   console.log(id);
-    //   axiosClient.delete(`users/${id}/delete`);
-    //   setlistUsers(
-    //     listUsers.filter((user) => {
-    //       return user.id !== id;
-    //     })
-    //   )
-    // }
 
-    // getAcc();
-    //deleteAcc(id);
+  // function deleteItem(id) {
+  //   console.log(id);
+  //   axiosClient.delete(`users/${id}/delete`);
+  //   setlistUsers(
+  //     listUsers.filter((user) => {
+  //       return user.id !== id;
+  //     })
+  //   )
+  // }
+
+  // getAcc();
+  //deleteAcc(id);
 
 
   // async function deleteAcc(id) {
@@ -103,10 +103,10 @@ function TableListAdmin() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-              <Col md="3">
-                <div className="date">
-                  <DateTimePicker onChange={onChange} value={value} />
-                </div>
+                <Col md="3">
+                  <div className="date">
+                    <DateTimePicker onChange={onChange} value={value} />
+                  </div>
                 </Col>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
@@ -135,7 +135,7 @@ function TableListAdmin() {
                             <td>{item.MaHV}</td>
                             <td>{item.TRANGTHAIXD}</td>
                             <td>
-                              <Button type="button" onClick={()=>goDetail()}>
+                              <Button type="button" onClick={() => goDetail()}>
                                 Detail
                               </Button>
                               <Button onClick={() => deleteItem(item.id)}>

@@ -26,7 +26,12 @@ import dsRV from "views/dsRV.js";
 import kqrl from "views/kqrl.js";
 import dsVP from "views/dsVP.js";
 import ttk from "views/ttk.js";
+import * as RiIcons from 'react-icons/ri'
+import * as AiIcons from 'react-icons/ai'
+import * as IoIcons from 'react-icons/io'
+import * as FaIcons from 'react-icons/fa'
 
+import { AccordionActions } from "@mui/material";
 
 
 const dashboardRoutes = [
@@ -69,9 +74,24 @@ const dashboardRoutes = [
 
   {
     path: "/qdct",
+    icon: <AiIcons.AiFillProfile/>,
+    iconClosed:<RiIcons.RiArrowDownSFill/>,
+    iconOpened:<RiIcons.RiArrowUpSFill/>,
     name: "Quyết định cấm trại",
     component: qdct,
-    layout: "/admin"
+    layout: "/admin",
+    subNav:[
+      {
+        title: "Danh sách vi phạm",
+        path: "/qdct/dsvp",
+        icon:<IoIcons.IoIosList/>,
+      },
+      {
+        title: "Danh sách không đạt thể lực",
+        path: "/qdct/dskdtl",
+        icon:<IoIcons.IoIosList/>,
+      }
+    ]
   },
   {
     path: "/dsRV",
