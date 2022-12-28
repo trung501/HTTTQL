@@ -291,7 +291,7 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(method='post', manual_parameters=[], request_body=openapi.Schema(
+    @swagger_auto_schema(method='put', manual_parameters=[], request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT, required=None,
         properties={
             'STT': openapi.Schema(type=openapi.TYPE_INTEGER, default=23),
@@ -301,8 +301,8 @@ class PersonViewSet(viewsets.ViewSet):
             'time_end': openapi.Schema(type=openapi.TYPE_STRING, default='2022-11-13 18:00'),
         }
     ), responses=post_list_person_response)
-    @action(methods=['POST'], detail=False, url_path='post-thay_doi-thong-tin-dang-ky')
-    def post_thay_doi_thong_tin_dang_ky(self, request):
+    @action(methods=['PUT'], detail=False, url_path='post-thay_doi-thong-tin-dang-ky')
+    def put_thay_doi_thong_tin_dang_ky(self, request):
         """
         API này dùng để đăng ký học viên ra ngoài. Mặc định trái thái xét duyệt sẽ là 0. Đối với hình thức ra ngoài, nhập 0 nếu là tranh thủ, nhập 1 nếu là ra ngoài. 
         """
