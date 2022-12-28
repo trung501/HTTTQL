@@ -29,6 +29,7 @@ import {
 function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
+  const [STT, setSTT] = useState();
   const [HTRN, setHTRN] = useState(0);
   const [DiaDiem, setDiaDiem] = useState();
   const [TGRa, setTGRa] = useState(new Date());
@@ -72,14 +73,12 @@ function TableListAdmin() {
     setShow(true);
     setmaHV(maHV);
   }
-  function getMaHV(maHv) {
-    setmaHV(maHV);
-  }
 
  async function xoaDSDK(maDK){
   const res = await axiosClient.delete(`/Person/delete-dang-ky/?sttDangKy=${maDK}`)
   if (res.status === 200) {
     alert("Xóa thành công");
+    getDSDK()
   } else {
     alert("Đã xảy ra lỗi")
   }
@@ -120,13 +119,43 @@ function TableListAdmin() {
         return "Không xác định";
     }
   }
-  const handleAddDSDK = (e) => {
-    e.preventDefault();
+function handleEditDSDK (
+  STT,
+  HTRN,
+  DiaDiem,
+  // TGRa,
+  // TGVao,
+  // gioRa,
+  // gioVao,
+  // phutRa,
+  // phutVao
+){
     setShowModal(true);
+    setSTT(STT)
+    setHTRN(HTRN);
+    setDiaDiem(DiaDiem);
+    // setTGRa(TGRa);
+    // setTGVao(TGVao);
+    // setHm({ ...hm, gioRa: gioRa});
+    // setHm({ ...hm, phutRa: phutRa});
+    // setHm({ ...hm, gioVao: gioVao});
+    // setHm({ ...hm, phutVao: phutVao});
   };
-  const handleAddDSDK1 = (e) => {
+  const handleEditDSDK1 = (e) => {
     e.preventDefault();
-    const ngayRa = TGRa.getDate();
+    if (
+      TGRa === "" ||
+      TGVao === "" ||
+      hm.gioRa === "" ||
+      hm.gioVao === "" ||
+      hm.phutRa === "" ||
+      hm.phutVao === "" ||
+      DiaDiem === "null"
+    ) {
+      alert("Nhập thiếu nội dung");
+    } else{
+      console.log(HTRN)
+      const ngayRa = TGRa.getDate();
     const thangRa = TGRa.getMonth() + 1;
     const namRa = TGRa.getFullYear();
     const ngayVao = TGVao.getDate();
@@ -135,31 +164,25 @@ function TableListAdmin() {
     const timeRa = `${namRa}-${thangRa}-${ngayRa} ${hm.gioRa}:${hm.phutRa}`;
     const timeVao = `${namVao}-${thangVao}-${ngayVao} ${hm.gioVao}:${hm.phutVao}`;
     const data = {
-      hinh_thuc_RN: parseInt(HTRN, 10),
+      STT: STT,
       dia_diem: DiaDiem,
+      hinh_thuc_RN: parseInt(HTRN, 10),
       time_start: timeRa,
       time_end: timeVao,
-      ma_HV: maHV,
     };
-    axiosClient.post("/Person/post-dang-ky-ra-ngoai/", data).then((res) => {
-      console.log(uyên)
-      // console.log(res["status"])
-      // if(res.sta){
-      //   alert("Thêm thành công")
-      // }
+    axiosClient.put("/Person/post-thay_doi-thong-tin-dang-ky/", data).then((res) => {
+      if (res.status === 200) {
+        alert("Chỉnh sửa thành công");
+        getDSDK()
+      } else {
+        alert("Đã xảy ra lỗi")
+      }
     });
     setShowModal(false);
+    }
+    
   };
-  async function deleteItem(id) {
-    await axiosClient.delete(`users/${id}/delete`);
-    setlistDSDK(
-      listUsers.filter((user) => {
-        return user.id !== id;
-      })
-    );
-  }
-  const history = useHistory();
-  const goDetail = () => history.push("/admin/user");
+
   return (
     <>
       <Modal
@@ -226,26 +249,18 @@ function TableListAdmin() {
                 <input type="text" value={hm.phutVao} placeholder="phút" style={{ width: 120 }} onChange={(e) => setHm({...hm, phutVao:e.target.value})}/>
               </div>
             </div>
-            <div class="form-group">
-              <label>Mã học viên</label>
-              <input
-                className="form-control url"
-                value={maHV}
-                onChange={(e) => setmaHV(e.target.value)}
-              />
-            </div>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"
-            onClick={handleAddDSDK1}
+            onClick={handleEditDSDK1}
             className="btn-table btn-left"
           >
-            Thêm
+            Lưu thay đổi
           </Button>
           <Button onClick={handleClose} variant="secondary" type="submit">
-            Đóng
+            Hủy
           </Button>
         </Modal.Footer>
       </Modal>
@@ -296,7 +311,15 @@ function TableListAdmin() {
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
-                                onClick={(e) => getMaHVShow(item.id)}
+                                onClick={(e)=>
+                                   handleEditDSDK(
+                                    item.STT,
+                                    (item.HinhThucRN==="Tranh thủ"?0:1),
+                                    item.DiaDiem
+                                    // item.TGRa,
+                                    // item.TGVao,
+
+                                   )}
                               >
                                 Chỉnh sửa
                               </Button>
