@@ -541,9 +541,15 @@ class PersonViewSet(viewsets.ViewSet):
             timeBetween = datetime.now().strftime("%d-%m-%Y")
         time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
         try:
-            query_string = f"SELECT * FROM DSDANGKY WHERE \
-                            (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
-                            AND MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
+            query_string = f"SELECT * FROM DSDANGKY \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
+                            AND HOCVIEN.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
             obj = generics_cursor.getDictFromQuery(
                 query_string, [donViID, donViID, donViID], page=page, size=size)
@@ -587,7 +593,14 @@ class PersonViewSet(viewsets.ViewSet):
             timeBetween = datetime.now().strftime("%d-%m-%Y")
         time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
         try:
-            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD > 0 AND \
+            query_string = f"SELECT * FROM DSDANGKY \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                             WHERE TRANGTHAIXD > 0 AND \
                             (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
                             AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
@@ -613,7 +626,14 @@ class PersonViewSet(viewsets.ViewSet):
             timeBetween = datetime.now().strftime("%d-%m-%Y")
         time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
         try:
-            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD < 0 AND \
+            query_string = f"SELECT * FROM DSDANGKY \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                             WHERE TRANGTHAIXD > 0 AND \
                             (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
                             AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
@@ -639,7 +659,14 @@ class PersonViewSet(viewsets.ViewSet):
             timeBetween = datetime.now().strftime("%d-%m-%Y")
         time_start, time_end = self.getTimeStartAndFinishWeek(timeBetween)
         try:
-            query_string = f"SELECT * FROM DSDANGKY WHERE TRANGTHAIXD = 0 AND \
+            query_string = f"SELECT * FROM DSDANGKY \
+                            LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = DSDANGKY.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                             WHERE TRANGTHAIXD > 0 AND \
                             (ThoiGianDi BETWEEN '{time_start}'AND '{time_end}') \
                             AND DSDANGKY.MAHV IN (SELECT MAHV FROM HOCVIEN,PERSON,DONVI WHERE HOCVIEN.personID = PERSON.PersonID AND DONVI.DonViID=PERSON.DonViID\
                             AND (DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s))"
