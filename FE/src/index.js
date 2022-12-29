@@ -28,6 +28,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import SlidenavLayout from "layouts/Slidenav";
 import SignIn from "views/signin";
+import SignUp from "views/signup";
 import { render } from "react-dom";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const login = true;
@@ -35,6 +36,7 @@ root.render(
   <BrowserRouter>
     <Switch>
       <Route path="/login" render={props=><SignIn/>}/>
+      <Route path="/signup" render={props=><SignUp/>}/>
       <Route path="/admin" render={(props) => login ? <SlidenavLayout {...props} />: <Redirect to="/login" />} />
     
     </Switch>
