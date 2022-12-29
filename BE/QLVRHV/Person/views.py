@@ -1182,3 +1182,67 @@ class VeBinhViewSet(viewsets.ViewSet):
         except:
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"status": True}, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size,sw_DonViID], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-loi-vi-pham-theo-theo-don-vi')
+    def get_list_loi_vi_pham_theo_theo_don_vi(self, request):
+        """
+        API này dùng để lấy danh sách học viên vào đi ra ngoài nhưng chưa vào theo đơn vị.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        donViID = str(request.query_params.get('donViID'))
+
+        try:
+            query_string = f'SELECT * FROM HV_VIPHAM \
+                            LEFT JOIN LOIVIPHAM ON HV_VIPHAM.MaLoiVP = LOIVIPHAM.MaLoiVP \
+                            LEFT JOIN VAORACONG ON VAORACONG.STTRaNgoai = HV_VIPHAM.STTRaNgoai \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_VIPHAM.STTRaNgoai = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s) \
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID,donViID,donViID], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-loi-vi-pham-')
+    def get_list_loi_vi_pham(self, request):
+        """
+        API này dùng để lấy danh sách học viên vi pham khi vào ra cổng.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+
+        try:
+            query_string = f'SELECT * FROM HV_VIPHAM \
+                            LEFT JOIN LOIVIPHAM ON HV_VIPHAM.MaLoiVP = LOIVIPHAM.MaLoiVP \
+                            LEFT JOIN VAORACONG ON VAORACONG.STTRaNgoai = HV_VIPHAM.STTRaNgoai \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_VIPHAM.STTRaNgoai = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
