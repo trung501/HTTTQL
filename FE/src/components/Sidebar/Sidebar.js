@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { useLocation, NavLink } from "react-router-dom";
 import axiosClient from "service/axiosClient";
 import { Nav } from "react-bootstrap";
@@ -23,17 +23,20 @@ import { Nav } from "react-bootstrap";
 import logo from "assets/img/reactlogo.png";
 
 function Sidebar({ color, image, routes }) {
+  const [role,setRole] = useState()
   const location = useLocation();
   const activeRoute = (routeName) => {
     return location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
 // API get permission
-async function getPermission() {
-  const url =  "/Person/get-permission/"
-  const res = await axiosClient.get(url);
-  console.log(res.data.permission);
-}
-getPermission();
+useEffect(()=>{
+  async function getPermission() {
+    const url =  "/Person/get-permission/"
+    const res = await axiosClient.get(url);
+    setRole(res.data.permission)
+  }
+  getPermission();
+})
 //
   return (
     <div className="sidebar" data-image={image} data-color={color}>
@@ -60,25 +63,117 @@ getPermission();
         <Nav>
           {routes.map((prop, key) => {
             if (!prop.redirect)
-              return (
-                <li
-                  className={
-                    prop.upgrade
-                      ? "active active-pro"
-                      : activeRoute(prop.layout + prop.path)
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.layout + prop.path}
-                    className="nav-link"
-                    activeClassName="active"
-                  >
-                    <i className={prop.icon} />
-                    <p>{prop.name}</p>
-                  </NavLink>
-                </li>
-              );
+              {
+                if(prop.layout === "/admin" && role ===5){
+                  return (
+                      <li
+                        className={
+                          prop.upgrade
+                            ? "active active-pro"
+                            : activeRoute(prop.layout + prop.path)
+                        }
+                        key={key}
+                      >
+                        <NavLink
+                          to={prop.layout + prop.path}
+                          className="nav-link"
+                          activeClassName="active"
+                        >
+                          <i className={prop.icon} />
+                          <p>{prop.name}</p>
+                        </NavLink>
+                      </li>
+                  )
+                }
+                else if(prop.layout==="/VB" && role ===4){
+                  return (
+                    
+                    <li
+                      className={
+                        prop.upgrade
+                          ? "active active-pro"
+                          : activeRoute(prop.layout + prop.path)
+                      }
+                      key={key}
+                    >
+                      <NavLink
+                        to={prop.layout + prop.path}
+                        className="nav-link"
+                        activeClassName="active"
+                      >
+                        <i className={prop.icon} />
+                        <p>{prop.name}</p>
+                      </NavLink>
+                    </li>
+                )
+                }
+                else if(prop.layout ==="/tieudoan" && role ===3){
+                   return (
+                    
+                    <li
+                      className={
+                        prop.upgrade
+                          ? "active active-pro"
+                          : activeRoute(prop.layout + prop.path)
+                      }
+                      key={key}
+                    >
+                      <NavLink
+                        to={prop.layout + prop.path}
+                        className="nav-link"
+                        activeClassName="active"
+                      >
+                        <i className={prop.icon} />
+                        <p>{prop.name}</p>
+                      </NavLink>
+                    </li>
+                )
+                }
+                else if(prop.layout ==="/daidoi" && role ===2){
+                  return (
+                    
+                    <li
+                      className={
+                        prop.upgrade
+                          ? "active active-pro"
+                          : activeRoute(prop.layout + prop.path)
+                      }
+                      key={key}
+                    >
+                      <NavLink
+                        to={prop.layout + prop.path}
+                        className="nav-link"
+                        activeClassName="active"
+                      >
+                        <i className={prop.icon} />
+                        <p>{prop.name}</p>
+                      </NavLink>
+                    </li>
+                )
+                }
+                else if(prop.layout ==="/lop" && role ===1){
+                  return (
+                    
+                    <li
+                      className={
+                        prop.upgrade
+                          ? "active active-pro"
+                          : activeRoute(prop.layout + prop.path)
+                      }
+                      key={key}
+                    >
+                      <NavLink
+                        to={prop.layout + prop.path}
+                        className="nav-link"
+                        activeClassName="active"
+                      >
+                        <i className={prop.icon} />
+                        <p>{prop.name}</p>
+                      </NavLink>
+                    </li>
+                )
+                }
+              }
             return null;
           })}
         </Nav>

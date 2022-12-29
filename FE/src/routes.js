@@ -19,6 +19,7 @@ import Dashboard from "views/Dashboard.js";
 import dsdk from "views/dsdk.js";
 import dsCxd from "views/dsCxd.js";
 import dsDD from "views/dsDD.js";
+import GTRV from "views/GTRV.js";
 import dsKDxd from "views/dsKDxd.js";
 import qdct from "views/qdct.js";
 import dsHV from "views/dsHV.js";
@@ -75,6 +76,12 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
+    path: "/GTRV",
+    name: "Giấy tờ ra vào",
+    component: GTRV,
+    layout: "/admin"
+  },
+  {
     path: "/dsRV",
     name: "Danh sách ra vào",
     component: dsRV,
@@ -100,9 +107,15 @@ const dashboardRoutes = [
   },
   {
     path: "/ttk",
-    name: "Tạo tài khoản",
+    name: "Quản lý tài khoản",
     component: ttk,
     layout: "/admin"
+  },
+  {
+    path: "/ttk",
+    name: "Quản lý tài khoản",
+    component: ttk,
+    layout: "/VB"
   },
 ];
 

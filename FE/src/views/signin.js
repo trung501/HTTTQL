@@ -22,50 +22,39 @@ function SignIn(){
     <div className="container_signin">
     <form  className='form signup'>
         <div className='control'>
-        <h3>Sign In</h3>
+        <h3>Đăng nhập</h3>
         <div className="mb-3">
           
-          <label>Username</label>
+          <label>Tên đăng nhập</label>
           <input
             type="username"
             
             className="form-control password"
-            placeholder="Enter password"
             onChange={e=>setUsername(e.target.value)}
             value={username}
           />
         </div>
         <div className="mb-3">
           
-          <label>Password</label>
+          <label>Mật khẩu</label>
           <input
             type="password"
             
             className="form-control password"
             placeholder="Enter password"
             onChange={e=>setPassword(e.target.value)}
-            value={password}
           />
         </div>
-        <div className="mb-3">
-          <div className="custom-control custom-checkbox">
-            <input
-              type="checkbox"
-              className="custom-control-input"
-              id="customCheck1"
-            />
-            <label className="custom-control-label" htmlFor="customCheck1">
-              Remember me
-            </label>
-          </div>
-        </div>
+
         <div className="d-grid">
           <button type="submit" onClick={handleLogin} className="btn btn-primary submit">
             Submit
           </button>
         </div>
         </div>
-        
+        <p className="forgot-password text-right">
+          Create <Link to="/signup">Account</Link>
+        </p>
 
       </form>
     </div>
