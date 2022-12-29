@@ -287,12 +287,38 @@ const dashboardRoutes = [
     component: dsRVVB,
     layout: "/vebinh"
   },
+  // DS DRN
   {
     path: "/dsDRN",
     name: "Danh sách đang ra ngoài",
     component: dsDRN,
     layout: "/admin"
   },
+  {
+    path: "/dsDRN",
+    name: "Danh sách đang ra ngoài",
+    component: dsDRNLop,
+    layout: "/lop"
+  },
+  {
+    path: "/dsDRN",
+    name: "Danh sách đang ra ngoài",
+    component: dsDRNDD,
+    layout: "/daidoi"
+  },
+  {
+    path: "/dsDRN",
+    name: "Danh sách đang ra ngoài",
+    component: dsDRNTD,
+    layout: "/tieudoan"
+  },
+  {
+    path: "/dsDRN",
+    name: "Danh sách đang ra ngoài",
+    component: dsDRNVB,
+    layout: "/vebinh"
+  },
+
 
   // KQRL
   {
@@ -356,18 +382,18 @@ const dashboardRoutes = [
     component: ttk,
     layout: "/admin"
   },
-  {
-    path: "/ttk",
-    name: "Quản lý tài khoản",
-    component: ttkDD,
-    layout: "/daidoi"
-  },
-  {
-    path: "/ttk",
-    name: "Quản lý tài khoản",
-    component: ttkTD,
-    layout: "/tieudoan"
-  },
+  // {
+  //   path: "/ttk",
+  //   name: "Quản lý tài khoản",
+  //   component: ttkDD,
+  //   layout: "/daidoi"
+  // },
+  // {
+  //   path: "/ttk",
+  //   name: "Quản lý tài khoản",
+  //   component: ttkTD,
+  //   layout: "/tieudoan"
+  // },
 
 ];
 

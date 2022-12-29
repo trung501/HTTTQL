@@ -26,7 +26,7 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const { id, setId,MADV } = useContext(GlobalState);
+  const { id, setId,MaDV } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [hoTen, setHoTen] = useState();
   const [loaiHV, setLoaiHV] = useState();
@@ -63,13 +63,13 @@ function TableListAdmin() {
   useEffect(() => {
     async function getItem() {
       const res = await axiosClient.get(
-        `/Person/get-list-hoc-vien/?page=0&size=12&donViID=${MADV}`
+        `/Person/get-list-hoc-vien/?page=0&size=12&donViID=${MaDV}`
       );
       console.log(res);
       setlistHV((listHV) => [...res.data]);
     }
     getItem();
-  }, [MADV]);
+  }, [MaDV]);
 
   const handleAddDSDK = (e, maHV) => {
     console.log("thêm");
@@ -346,7 +346,28 @@ function TableListAdmin() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header></Card.Header>
+              <Card.Header>
+                <Col>
+                <div class="form-group">
+              <label>Tìm kiếm theo tên</label>
+              <input
+                className="form-control url"
+                value=""
+                // onChange={(e) => setDiaDiem(e.target.value)}
+              />
+            </div>
+                </Col>
+                <Col>
+                <div class="form-group">
+              <label>Tìm kiếm theo id</label>
+              <input
+                className="form-control url"
+                value=""
+                // onChange={(e) => setDiaDiem(e.target.value)}
+              />
+            </div>
+                </Col>
+              </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
                   <thead>

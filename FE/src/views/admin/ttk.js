@@ -3,6 +3,7 @@ import { useEffect } from "react";
 // import apiAdmin from "../service/Admin/apiAdmin";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 
 
 
@@ -17,6 +18,7 @@ import {
   Container,
   Row,
   Col,
+  Form
 } from "react-bootstrap";
 
 function TableListAdmin() {
@@ -36,29 +38,43 @@ function TableListAdmin() {
     getItem();
 
   }, []);
-  function setRole(personID, username){
+  function setRole(username){
     setShowModal(true);
-    setPersonID(personID);
     setUsername(username);
   }
   function setRole1(){
-
+console.log(roleID)
     const data ={
       username: username,
       personID: personID,
       roleID: roleID
     }
-    axiosClient.post("/Person/post-tao-giay-to-RN-hoc-vien/", data).then((res)=>{
+    axiosClient.post("/account/setRoleUser", data).then((res)=>{
       if (res.status === 200) {
         alert("Thêm thành công");
-        getDSDK()
+        getItem()
       } else {
         alert("Đã xảy ra lỗi")
       }
     })
     setShowModal(false);
   }
-
+  function getRole(RoleID) {
+    switch (RoleID) {
+      case 1:
+        return "Lớp";
+      case 2:
+        return "Đại đội";
+      case 3:
+        return "Tiểu đoàn";
+      case 4:
+        return "Vệ binh"
+      case 5:
+        return "Học viện";
+      default:
+        return "Không xác định";
+    }
+  }
 
   return (
     <>
@@ -72,13 +88,27 @@ function TableListAdmin() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-
+          <div className="form-group">
+              <label>Set roleID</label>
+              <div>
+                <select
+                  class="form-control name-domain"
+                  onChange={(event) => setRoleID(event.target.value)}
+                >
+                  <option value="1">Quyền của lớp</option>
+                  <option value="2">Quyền của đại đội</option>
+                  <option value="3">Quyền của tiểu đoàn</option>
+                  <option value="4">Quyền của vệ binh</option>
+                  <option value="5">Quyền của học viện</option>
+                </select>
+              </div>
+            </div>
             <div class="form-group">
-              <label>Số vé</label>
+              <label>Person ID</label>
               <input
                 className="form-control url"
-                value={soVe}
-                onChange={(e) => setSoVe(e.target.value)}
+                value={personID}
+                onChange={(e) => setPersonID(e.target.value)}
               />
             </div>
           </Form>
@@ -86,10 +116,10 @@ function TableListAdmin() {
         <Modal.Footer>
         <Button
             variant="secondary"
-            onClick={handleAddGTRN1}
+            onClick={setRole1}
             className="btn-table btn-left"
           >
-            Thêm giấy tờ
+            Set Role
           </Button>
           <Button onClick={handleClose} variant="secondary" type="submit">
             Hủy
@@ -129,13 +159,13 @@ function TableListAdmin() {
                             <td>{item.id}</td>
                             <td>{item.username}</td>
                             <td>{item.HoTen}</td>
-                            <td>{item.roleID}</td>
+                            <td>{getRole(item.roleID)}</td>
                             <td>{item.userSetRole}</td>
                             <td>{item.TenTD}</td>
                             <td>{item.TenDD}</td>
                             <td>{item.TenLop}</td>
                             <td>
-                              <Button onClick={() => setRole(item.id)}>
+                              <Button onClick={() => setRole(item.username)}>
                                 Set Role
                               </Button>
                             </td>

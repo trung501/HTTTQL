@@ -23,7 +23,7 @@ import { GlobalState } from "layouts/Slidenav";
 import logo from "assets/img/reactlogo.png";
 
 function Sidebar({ color, image, routes }) {
-  const {setMADV} = useContext(GlobalState)
+  const {MaDV, setMADV} = useContext(GlobalState)
   const [role,setRole] = useState()
   const location = useLocation();
   const activeRoute = (routeName) => {
@@ -34,11 +34,13 @@ useEffect(()=>{
   async function getPermission() {
     const url =  "/Person/get-permission/"
     const res = await axiosClient.get(url);
+    // console.log(res.data.code)
     setRole(res.data.permission)
     setMADV(res.data.code)
   }
   getPermission();
 },[])
+console.log(MaDV);
 //
   return (
     <div className="sidebar" data-image={image} data-color={color}>

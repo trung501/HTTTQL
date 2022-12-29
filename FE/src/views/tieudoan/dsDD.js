@@ -55,10 +55,9 @@ function TableListAdmin() {
     }
     getDSDD();
   }, [id, selectedDate]);
-  function handleAddGTRN(STT, maLoai){
+  function handleAddGTRN(STT){
     setShowModal(true);
     setSTT(STT);
-    setMaLoai(maLoai);
   }
   function handleAddGTRN1(){
 
@@ -111,7 +110,19 @@ function TableListAdmin() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-
+          <div className="form-group">
+              <label>Loại giấy tờ</label>
+              <div>
+                <select
+                  class="form-control name-domain"
+                  onChange={(event) => setMaLoai(event.target.value)}
+                >
+                  <option value="1">Tích kê điện tử</option>
+                  <option value="2">Giấy ra vào</option>
+                  <option value="3">Giấy phép</option>
+                </select>
+              </div>
+            </div>
             <div class="form-group">
               <label>Số vé</label>
               <input
@@ -186,9 +197,7 @@ function TableListAdmin() {
                                 className="btn-table btn-left"
                                 onClick={(e) => 
                                   handleAddGTRN(
-                                     item.STT,
-                                     (item.HinhThucRN==="Tranh thủ"?0:1)
-                                  )}
+                                     item.STT                                  )}
                               >
                                 Thêm GTRN
                               </Button></td>

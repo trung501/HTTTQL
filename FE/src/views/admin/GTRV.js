@@ -71,9 +71,22 @@ function TableListAdmin() {
       ]
     });
   };
+  function getTrangThai(loaiGiayTo) {
+    switch (loaiGiayTo) {
+      case 1:
+        return "Tích kê điện tử";
+      case 2:
+        return "Giấy ra vào";
+      case 3:
+        return "Giấy phép";
+      default:
+        return "Không xác định";
+    }
+  }
 
   return (
     <>
+    
       <Container fluid>
         <Row>
           <Col md="12">
@@ -96,6 +109,7 @@ function TableListAdmin() {
                   <thead>
                     <tr>
                       <th className="border-0">STT</th>
+                      <th className="border-0">Loại giấy tờ</th>
                       <th className="border-0">Số vé</th>
                       <th className="border-0">Thời gian đi</th>
                       <th className="border-0">Thời gian về</th>
@@ -111,6 +125,7 @@ function TableListAdmin() {
                         return (
                           <tr key={item.STTGiayTo}>
                             <td>{item.STTGiayTo}</td>
+                            <td>{getTrangThai(item.MaLoai)}</td>
                             <td>{item.SoVe}</td>
                             <td>{item.ThoiGianDi}</td>
                             <td>{item.ThoiGianVe}</td>

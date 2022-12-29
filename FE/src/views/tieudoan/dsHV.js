@@ -394,13 +394,13 @@ function TableListAdmin() {
                               >
                                 Chi tiết
                               </Button>
-                              <Button
+                              {/* <Button
                                 type="button"
                                 className="btn-table btn-left"
                                 onClick={(e) => handleAddDSDK(e, item.MaHV)}
                               >
                                 Thêm DSDK
-                              </Button>
+                              </Button> */}
                               <Link to={`/admin/kqrl?maHV=${item.MaHV}`}> 
                               <Button type="button" 
                               className="btn-table btn-left" 

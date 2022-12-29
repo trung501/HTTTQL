@@ -9,6 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import Modal from "react-bootstrap/Modal";
+
 // react-bootstrap components
 import {
   Badge,
@@ -27,6 +29,7 @@ function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [listDSDRN, setlistDSDRN] = useState([]);
+  const [STTGiayTo, setSTTGiayTo] = useState()
 
   useEffect(() => {
     async function getDSDRN() {
@@ -38,7 +41,34 @@ function TableListAdmin() {
     getDSDRN();
   }, [id]);
 
-  
+  async function confirm(STTGiayTo){
+    const data ={
+      STTGiayTo: STTGiayTo
+    }
+    const res = await axiosClient.post("/VeBinh/post-vao-cong", data)
+    if (res.status === 200) {
+      alert("Thành công");
+      getDSDK()
+    } else {
+      alert("Đã xảy ra lỗi")
+    }
+   }
+   const handleConfirm = (STTGiayTo) => {
+    console.log(STTGiayTo)
+    confirmAlert({
+      message: 'Xác nhận đã vào?',
+      buttons: [
+        {
+          label: 'Có',
+          onClick: () => confirm(STTGiayTo)
+        },
+        {
+          label: 'Không',
+          onClick: () => {}
+        }
+      ]
+    });
+  };
   return (
     <>
       <Container fluid>
@@ -75,6 +105,15 @@ function TableListAdmin() {
                             <td>{item.STTDaDuyet}</td>
                             <td>{item.SoVe}</td>
                             <td>{item.TenLoai}</td>
+                            <td>
+                            <Button
+                                type="button"
+                                className="btn-table btn-left"
+                                onClick={(e) => handleConfirm(item.STTGiayTo)}
+                              >
+                                Đã vào
+                              </Button>
+                            </td>
                           </tr>
                         );
                       })}
