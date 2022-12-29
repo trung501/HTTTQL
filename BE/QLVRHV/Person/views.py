@@ -275,14 +275,17 @@ class PersonViewSet(viewsets.ViewSet):
         page = request.query_params.get('page')
         size = request.query_params.get('size')
         try:
-            query_string = "SELECT HOCVIEN.MAHV,HOCVIEN.personID,HoTen,NgSinh,PERSON.DonViID,ThoiGian,PhanLoaiRL FROM HV_RENLUYEN  \
+            query_string = "SELECT * FROM HV_RENLUYEN  \
                             LEFT JOIN HOCVIEN ON HOCVIEN.MaHV = HV_RENLUYEN.MaHV \
                             LEFT JOIN KQRL ON KQRL.MaLoai = HV_RENLUYEN.MaLoai\
                             LEFT JOIN PERSON ON HOCVIEN.PERSONID = PERSON.PersonID \
                             LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID  \
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN LOAIHOCVIEN ON LOAIHOCVIEN.MALOAI = HOCVIEN.LOAIHOCVIEN \
                             WHERE HOCVIEN.MAHV = %s \
                             ORDER BY ThoiGian DESC"
-            print(query_string)
             obj = generics_cursor.getDictFromQuery(
                 query_string, [maHV], page=page, size=size)
             if obj is None:
