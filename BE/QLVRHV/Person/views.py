@@ -329,7 +329,7 @@ class PersonViewSet(viewsets.ViewSet):
         try:
             query_string = f"SELECT DONVI.MaLop,LOP.TenLop, DONVI.MaDaiDoi,DAIDOI.TenDD,DONVI.MaTieuDoan,TIEUDOAN.TenTD FROM PERSON \
                             INNER JOIN Account_user ON Account_user.personID = PERSON.PersonID \
-                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.PersonID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
                             LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
