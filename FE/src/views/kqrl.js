@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import axiosClient from "service/axiosClient";
+import {Link,useLocation} from 'react-router-dom'
+import queryString from 'query-string'
 // react-bootstrap components
 import {
   Badge,
@@ -16,18 +18,26 @@ import {
 import { data } from "jquery";
 
 function TableListUser() {
-  const [listUsers, setlistUsers] = useState([]);
+  const { search } = useLocation();
+  console.log(search);
+  const values = queryString.parse(search)
+  console.log(values);
+  console.log(values.maHV);
+  const [listKQRL, setlistKQRL] = useState([]);
+  
   useEffect(() => {
     async function getItem() {
-      const res = await axiosClient.get("/users/list");
-      //console.log(res.data.items);
-      setlistUsers((listUsers) => [...res.data.items, ...listUsers]);
-     
+      const url =  `/Person/get-list-ket-qua-ren-luyen-by-id/?page=0&size=12&maHV=${values.maHV}`
+      const res = await axiosClient.get(url);
+
+      console.log(res);
+      setlistKQRL((listKQRL) => [...res.data]);
+      console.log(listKQRL);
     }
     getItem();
-  }, []);
+  }, [values.maHV]);
  
-  console.log(listUsers);
+
   return (
     <>
       <Container fluid>
@@ -35,36 +45,32 @@ function TableListUser() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Danh sách người dùng quản trị</Card.Title>
-                <p className="card-category">
-                 Thông tin 
-                </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
                   <thead>
                     <tr>
-                      <th className="border-0">ID</th>
-                      <th className="border-0">Email</th>
-                      <th className="border-0">is_accepted</th>
-                      <th className="border-0">running</th>
-                      <th className="border-0">finished</th>
-                      <th className="border-0">total_alert</th>
-                      <th className="border-0">total_scan</th>
+                      <th className="border-0">Mã học viên</th>
+                      <th className="border-0">Loại học viên</th>
+                      <th className="border-0">Họ tên</th>
+                      <th className="border-0">Ngày sinh</th>
+                      <th className="border-0">Đơn vị</th>
+                      <th className="border-0">Thời gian</th>
+                      <th className="border-0">Phân loại rèn luyện</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {listUsers &&
-                      listUsers.map((item) => {
+                    {listKQRL &&
+                      listKQRL.map((item) => {
                         return (
-                          <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.email}</td>
-                            <td>{String(item.is_accepted)}</td>
-                            <td>{item.running}</td>
-                            <td>{item.finished}</td>
-                            <td>{item.total_scan}</td>
-                            <td>{item.total_alert}</td>
+                          <tr key={item.ThoiGian}>
+                            <td>{item.MaHV}</td>
+                            <td>{item.PERSONID}</td>
+                            <td>{item.HoTen}</td>
+                            <td>{item.NgSinh}</td>
+                            <td>{item.DonViID}</td>
+                            <td>{item.ThoiGian}</td>
+                            <td>{item.PhanLoaiRL}</td>
                           </tr>
                         );
                       })}

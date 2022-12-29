@@ -17,7 +17,7 @@
 */
 import React, { Component } from "react";
 import { useLocation, NavLink } from "react-router-dom";
-
+import axiosClient from "service/axiosClient";
 import { Nav } from "react-bootstrap";
 
 import logo from "assets/img/reactlogo.png";
@@ -27,6 +27,14 @@ function Sidebar({ color, image, routes }) {
   const activeRoute = (routeName) => {
     return location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
+// API get permission
+async function getPermission() {
+  const url =  "/Person/get-permission/"
+  const res = await axiosClient.get(url);
+  console.log(res.data.permission);
+}
+getPermission();
+//
   return (
     <div className="sidebar" data-image={image} data-color={color}>
       <div
