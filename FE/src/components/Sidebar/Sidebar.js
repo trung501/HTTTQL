@@ -15,14 +15,15 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useState,useContext } from "react";
 import { useLocation, NavLink } from "react-router-dom";
 import axiosClient from "service/axiosClient";
 import { Nav } from "react-bootstrap";
-
+import { GlobalState } from "layouts/Slidenav";
 import logo from "assets/img/reactlogo.png";
 
 function Sidebar({ color, image, routes }) {
+  const {setMADV} = useContext(GlobalState)
   const [role,setRole] = useState()
   const location = useLocation();
   const activeRoute = (routeName) => {
@@ -34,9 +35,10 @@ useEffect(()=>{
     const url =  "/Person/get-permission/"
     const res = await axiosClient.get(url);
     setRole(res.data.permission)
+    setMADV(res.data.code)
   }
   getPermission();
-})
+},[])
 //
   return (
     <div className="sidebar" data-image={image} data-color={color}>
@@ -85,7 +87,7 @@ useEffect(()=>{
                       </li>
                   )
                 }
-                else if(prop.layout==="/VB" && role ===4){
+                else if(prop.layout==="/vebinh" && role ===4){
                   return (
                     
                     <li

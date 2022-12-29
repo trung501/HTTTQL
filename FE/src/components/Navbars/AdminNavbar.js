@@ -43,14 +43,10 @@ function Header() {
     useEffect(() => {
       async function getItem() {
         const res = await axiosClient.get("/Address/get-list-don-vi");
-        setDv(res.data)
-        setListDv(Object.keys(res.data));     
-        // console.log(Object.keys(res.data))
-        console.log(dv)
+        setDv(res.data)  
       }
       getItem();
     }, []);
-    console.log(dv)
     const[tenDv, setTenDv] = useState()
     async function getTenDv(maDv){
       const res = await axiosClient.get(`/Address/get-name-don-vi/?donViID=${maDv}`)
@@ -62,7 +58,7 @@ function Header() {
       setId(id)
       setTenDv(name)
      }
-    
+   console.log(dv) 
 
   
   const mobileSidebarToggle = (e) => {
@@ -139,17 +135,17 @@ function Header() {
             {isShowMenu &&  
             <div className="dropdown">
               <ul className="list">
-                {dv.data.map((item,index)=>{
+                {dv?.data?.map((item,index)=>{
                   return (
                     <li className="item">
                     <p onClick={(e)=>getId(item.code, item.name)}>{item.name}</p>
                     <ul className="list-1">
-                      {item.data.map((dd)=>{
+                      {item?.data?.map((dd)=>{
                         return (
                         <li className="item-1">
                         <p  onClick={(e)=>getId(dd.code, dd.name)}>{dd.name}</p>
                         <ul className="list-2">
-                          {dd.data.map((lop)=>{
+                          {dd?.data?.map((lop)=>{
                           return (
                             <li className="item-2">
                               <p  onClick={(e)=>getId(lop.code, lop.name)}>{lop.name}</p>

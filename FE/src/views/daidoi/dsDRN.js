@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
-import "../assets/css/btn_vul.css";
+import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";

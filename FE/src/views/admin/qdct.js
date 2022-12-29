@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
-import "../assets/css/btn_vul.css";
+import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";
@@ -305,13 +305,13 @@ function handleEditDSCT (STT, MaHV, liDo) {
                   </div>
                   
                 </Col>
-                <button
+                {/* <button
                   type="button"
                   class="btn btn-add-target  btn-table btn-left"
                   onClick={handleAddDSCT}
                 >
                   THÊM MỚI
-                </button>
+                </button> */}
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
@@ -322,7 +322,7 @@ function handleEditDSCT (STT, MaHV, liDo) {
                       <th className="border-0">Thời gian bắt đầu</th>
                       <th className="border-0">Thời gian kết thúc</th>
                       <th className="border-0">Lí do</th>
-                      <th className="border-0">Thao tác</th>
+                      {/* <th className="border-0">Thao tác</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -335,7 +335,7 @@ function handleEditDSCT (STT, MaHV, liDo) {
                             <td>{item.TG_BatDau}</td>
                             <td>{item.TG_KetThuc}</td>
                             <td>{item.LIDO}</td>
-                            <td>
+                            {/* <td>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
@@ -355,7 +355,7 @@ function handleEditDSCT (STT, MaHV, liDo) {
                               >
                                 Xóa
                               </Button>
-                            </td>
+                            </td> */}
                           </tr>
                         );
                       })}

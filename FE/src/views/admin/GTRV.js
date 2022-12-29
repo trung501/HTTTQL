@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
-import "../assets/css/btn_vul.css";
+import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";
@@ -25,10 +25,7 @@ import {
 
 function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
-  const [maHV, setmaHV] = useState();
-  const [STT, setSTT] = useState();
-  const [kDuyet, setKDuyet] = useState();
-  const [listDSKD, setlistDSKD] = useState([]);
+  const [listGTRV, setlistGTRV] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleChange = (date) => {
@@ -36,33 +33,44 @@ function TableListAdmin() {
   };
 
   useEffect(() => {
-    async function getDSKD() {
+    async function getGTRV() {
       const day = selectedDate.getDate();
       const month = selectedDate.getMonth() + 1;
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-danh-sach-khong-duoc-duyet/?donViID=${id}&timeBetween=${dateString}`
+        `/Person/get-list-giay-to-RN-hoc-vien/?donViID=${id}&timeBetween=${dateString}&page=1&size=12`
       );
       console.log(res)
-      setlistDSKD((listDSKD) => [...res.data]);
+      setlistGTRV((listGTRV) => [...res.data]);
     }
-    getDSKD();
+    getGTRV();
   }, [id, selectedDate]);
-
-  function getTrangThai(TRANGTHAIXD) {
-    switch (TRANGTHAIXD) {
-      case -2:
-        return "Đại đội không duyệt";
-      case -3:
-        return "Tiểu đoàn không duyệt";
-      case -4:
-      case -5:
-        return "Học viện không duyệt";
-      default:
-        return "Không xác định";
+  async function xoaGTRV(STT){
+    const res = await axiosClient.delete(`/Person/delete-giay-to-RN-hoc-vien/?sttGiayToRN=${STT}`)
+    if (res.status === 200) {
+      alert("Xóa thành công");
+      getDSDK()
+    } else {
+      alert("Đã xảy ra lỗi")
     }
-  }
+   }
+   const handleDelete = (STT) => {
+    console.log(STT)
+    confirmAlert({
+      message: 'Bạn có chắc chắn muốn xóa không?',
+      buttons: [
+        {
+          label: 'Có',
+          onClick: () => xoaGTRV(STT)
+        },
+        {
+          label: 'Không',
+          onClick: () => {}
+        }
+      ]
+    });
+  };
 
   return (
     <>
@@ -88,26 +96,36 @@ function TableListAdmin() {
                   <thead>
                     <tr>
                       <th className="border-0">STT</th>
-                      <th className="border-0">Hình thức ra ngoài</th>
-                      <th className="border-0">Địa điểm</th>
+                      <th className="border-0">Số vé</th>
                       <th className="border-0">Thời gian đi</th>
                       <th className="border-0">Thời gian về</th>
                       <th className="border-0">Mã học viên</th>
-                      <th className="border-0">Trạng thái</th>
+                      <th className="border-0">Họ tên</th>
+                      <th className="border-0">Lớp</th>
+                      <th className="border-0">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {listDSKD &&
-                      listDSKD.map((item) => {
+                    {listGTRV&&
+                      listGTRV.map((item) => {
                         return (
-                          <tr key={item.STT}>
-                            <td>{item.STT}</td>
-                            <td>{item.HinhThucRN}</td>
-                            <td>{item.DiaDiem}</td>
+                          <tr key={item.STTGiayTo}>
+                            <td>{item.STTGiayTo}</td>
+                            <td>{item.SoVe}</td>
                             <td>{item.ThoiGianDi}</td>
                             <td>{item.ThoiGianVe}</td>
                             <td>{item.MaHV}</td>
-                            <td>{getTrangThai(item.TRANGTHAIXD)}</td>
+                            <td>{item.HoTen}</td>
+                            <td>{item.TenLop}</td>
+                            <td>
+                            <Button
+                                type="button"
+                                className="btn-table btn-left"
+                                onClick={(e) => handleDelete(item.STTGiayTo)}
+                              >
+                                Xóa
+                              </Button>
+                            </td>
                           </tr>
                         );
                       })}
