@@ -161,6 +161,30 @@ class PersonViewSet(viewsets.ViewSet):
             return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=obj, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page, sw_size], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-account')
+    def get_list_account(self, request):
+        """
+        API này dùng để lấy danh sách person của một đơn vị cụ thể nào, có thể là lớp,đại đội, tiểu đoàn. Để sử dụng phân trang thì nhập thêm param page, size vào. KHuVUC : 0 Nước ngoài, 1 MB, 2 MT, 3MN
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        try:
+            query_string = "SELECT * FROM Account_user \
+                            LEFT JOIN PERSON ON PERSON.PersonID = Account_user.personID\
+                            LEFT JOIN DONVI ON PERSON.DonViID = DONVI.DonViID\
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            ORDER BY DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan"
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(method='get', manual_parameters=[sw_DonViID,sw_NameHV], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-info-hoc-vien-by-name')
     def get_info_hoc_vien_by_name(self, request):
