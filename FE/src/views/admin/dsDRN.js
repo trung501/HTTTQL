@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axiosClient from "service/axiosClient";
 import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
-import "../assets/css/btn_vul.css";
+import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";
@@ -26,35 +26,17 @@ import {
 function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
-  const [listDSRV, setlistDSRV] = useState([]);
-  const [selectedDateBD, setselectedDateBD] = useState(new Date());
-  const [selectedDateKT, setselectedDateKT] = useState(new Date());
-
-  const handleChange = (date) => {
-    setselectedDateBD(date);
-  };
-  const handleChangeKT = (date) => {
-    setselectedDateKT(date);
-  };
+  const [listDSDRN, setlistDSDRN] = useState([]);
 
   useEffect(() => {
-    async function getDSRV() {
-      const day = selectedDateBD.getDate();
-      const month = selectedDateBD.getMonth() + 1;
-      const year = selectedDateBD.getFullYear();
-      const dayKT = selectedDateKT.getDate();
-      const monthKT = selectedDateKT.getMonth() + 1;
-      const yearKT = selectedDateKT.getFullYear();
-      const dateStringBD = `${year}-${month}-${day}`;
-      const dateStringKT = `${yearKT}-${monthKT}-${dayKT}`;
+    async function getDSDRN() {
       const res = await axiosClient.get(
-        `/VeBinh/get-list-danh-sach-vao-ra-cong/?page=0&size=12&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
-      );
+      "/VeBinh/get-list-danh-sach-ra-ngoai-chua-vao/?page=0&size=12"      );
       console.log(res)
-      setlistDSRV((listDSRV) => [...res.data]);
+      setlistDSDRN((listDSDRN) => [...res.data]);
     }
-    getDSRV();
-  }, [id, selectedDateBD, selectedDateKT]);
+    getDSDRN();
+  }, [id]);
 
   
   return (
@@ -64,25 +46,6 @@ function TableListAdmin() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Col md="3">
-                  <div style={{ display: "flex", gap: 12 }}>
-                  <p>Thời gian bắt đầu</p>
-                  <DatePicker
-                    dateFormat="dd/MM/yyyy"
-                    selected={selectedDateBD}
-                    onChange={handleChange}
-                  />
-                  </div>
-                  <div style={{ display: "flex", gap: 12 }}>
-                  <p>Thời gian kết thúc</p>
-                  <DatePicker
-                    dateFormat="dd/MM/yyyy"
-                    selected={selectedDateKT}
-                    onChange={handleChangeKT}
-                  />
-                  </div>
-                  
-                </Col>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
@@ -93,7 +56,6 @@ function TableListAdmin() {
                       <th className="border-0">Mã học viên</th>
                       <th className="border-0">Họ tên</th>
                       <th className="border-0">Thời gian ra</th>
-                      <th className="border-0">Thời gian vào</th>
                       <th className="border-0">STT đã duyệt</th>
                       <th className="border-0">Số vé</th>
                       <th className="border-0">Loại vé</th>
@@ -101,8 +63,8 @@ function TableListAdmin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {listDSRV &&
-                      listDSRV.map((item) => {
+                    {listDSDRN &&
+                      listDSDRN.map((item) => {
                         return (
                           <tr key={item.STTRaNgoai}>
                             <td>{item.STTRaNgoai}</td>
@@ -110,7 +72,6 @@ function TableListAdmin() {
                             <td>{item.MaHV}</td>
                             <td>{item.HoTen}</td>
                             <td>{item.TG_Ra}</td>
-                            <td>{item.TG_Vao}</td>
                             <td>{item.STTDaDuyet}</td>
                             <td>{item.SoVe}</td>
                             <td>{item.TenLoai}</td>

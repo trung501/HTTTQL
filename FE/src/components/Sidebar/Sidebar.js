@@ -36,7 +36,7 @@ useEffect(()=>{
     setRole(res.data.permission)
   }
   getPermission();
-})
+},[])
 //
   return (
     <div className="sidebar" data-image={image} data-color={color}>

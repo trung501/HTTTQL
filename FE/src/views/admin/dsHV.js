@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import { GlobalState } from "layouts/Slidenav";
 import { Pagination } from "@mui/material";
 import Modal from "react-bootstrap/Modal";
-import "../assets/css/btn_vul.css";
+import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";

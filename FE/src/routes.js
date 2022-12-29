@@ -16,18 +16,32 @@
 
 */
 import Dashboard from "views/Dashboard.js";
-import dsdk from "views/dsdk.js";
-import dsCxd from "views/dsCxd.js";
-import dsDD from "views/dsDD.js";
-import GTRV from "views/GTRV.js";
-import dsKDxd from "views/dsKDxd.js";
-import qdct from "views/qdct.js";
-import dsHV from "views/dsHV.js";
-import dsRV from "views/dsRV.js";
-import kqrl from "views/kqrl.js";
-import dsVP from "views/dsVP.js";
-import dsDRN from "views/dsDRN.js";
-import ttk from "views/ttk.js";
+import dsdk from "views/admin/dsdk.js";
+import dsCxd from "views/admin/dsCxd.js";
+import dsDD from "views/admin/dsDD.js";
+import GTRV from "views/admin/GTRV.js";
+import dsKDxd from "views/admin/dsKDxd.js";
+import qdct from "views/admin/qdct.js";
+import dsHV from "views/admin/dsHV.js";
+import dsRV from "views/admin/dsRV.js";
+import kqrl from "views/admin/kqrl.js";
+import dsVP from "views/admin/dsVP.js";
+import dsDRN from "views/admin/dsDRN.js";
+import ttk from "views/admin/ttk.js";
+
+import Test from "views/daidoi/Test";
+import dsdkDD from "views/daidoi/dsdk.js";
+import dsCxdDD from "views/daidoi/dsCxd.js";
+import dsDDDD from "views/daidoi/dsDD.js";
+import GTRVDD from "views/daidoi/GTRV.js";
+import dsKDxdDD from "views/daidoi/dsKDxd.js";
+import qdctDD from "views/daidoi/qdct.js";
+import dsHVDD from "views/daidoi/dsHV.js";
+import dsRVDD from "views/daidoi/dsRV.js";
+import kqrlDD from "views/daidoi/kqrl.js";
+import dsVPDD from "views/daidoi/dsVP.js";
+import dsDRNDD from "views/daidoi/dsDRN.js";
+import ttkDD from "views/daidoi/ttk.js";
 
 
 
@@ -45,10 +59,22 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
+    path: "/dsHV",
+    name: "Danh sách học viên",
+    component: Test,
+    layout: "/daidoi"
+  },
+  {
     path: "/dsdk",
     name: "Danh sách đăng kí",
     component: dsdk,
     layout: "/admin"
+  },
+  {
+    path: "/dsdk",
+    name: "Danh sách đăng kí",
+    component: Test,
+    layout: "/daidoi"
   },
   {
     path: "/dsCxd",
