@@ -98,7 +98,7 @@ function TableListAdmin() {
       const namVao = TGVao.getFullYear();
       const timeRa = `${namRa}-${thangRa}-${ngayRa} ${hm.gioRa}:${hm.phutRa}`;
       const timeVao = `${namVao}-${thangVao}-${ngayVao} ${hm.gioVao}:${hm.phutVao}`;
-
+ 
       const data = {
         hinh_thuc_RN: parseInt(HTRN, 10),
         dia_diem: DiaDiem,
