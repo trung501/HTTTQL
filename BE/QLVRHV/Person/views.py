@@ -1025,9 +1025,42 @@ class VeBinhViewSet(viewsets.ViewSet):
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
                             WHERE "{timeStart}" <= DATE(TG_RA) AND DATE(TG_RA) <= "{timeEnd}" \
-                            ORDER BY TG_Ra DESC'
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
             obj = generics_cursor.getDictFromQuery(
                 query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size,sw_DonViID,sw_TimeStart,sw_TimeEnd], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-vao-ra-cong-theo-don-vi')
+    def get_list_danh_sach_vao_ra_cong_theo_don_vi(self, request):
+        """
+        API này dùng để lấy danh sách học viên vào ra cổng trong khoảng ngày nào đó.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        donViID = str(request.query_params.get('donViID'))
+        timeStart = request.query_params.get('timeStart')
+        timeEnd = request.query_params.get('timeEnd')
+        try:
+            query_string = f'SELECT * FROM VAORACONG \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_GIAYTORN.STTDaDuyet = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE "{timeStart}" <= DATE(TG_RA) AND DATE(TG_RA) <= "{timeEnd}" AND \
+                            PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s) \
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID,donViID,donViID], page=page, size=size)
             if obj is None:
                 return Response(data={}, status=status.HTTP_204_NO_CONTENT)
         except:
@@ -1055,9 +1088,41 @@ class VeBinhViewSet(viewsets.ViewSet):
                             LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
                             LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
                             WHERE TG_VAO = "" OR TG_Vao IS NULL \
-                            ORDER BY TG_Ra DESC'
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
             obj = generics_cursor.getDictFromQuery(
                 query_string, [], page=page, size=size)
+            if obj is None:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data=obj, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(method='get', manual_parameters=[sw_page,sw_size,sw_DonViID], responses=get_list_person_response)
+    @action(methods=['GET'], detail=False, url_path='get-list-danh-sach-ra-ngoai-chua-vao-theo-don-vi')
+    def get_list_danh_sach_ra_ngoai_chua_vao_theo_don_vi(self, request):
+        """
+        API này dùng để lấy danh sách học viên vào đi ra ngoài nhưng chưa vào theo đơn vị.
+        """
+        page = request.query_params.get('page')
+        size = request.query_params.get('size')
+        donViID = str(request.query_params.get('donViID'))
+
+        try:
+            query_string = f'SELECT * FROM VAORACONG \
+                            LEFT JOIN HV_GIAYTORN ON VAORACONG.STTGiayTo = HV_GIAYTORN.STTGiayTo \
+                            LEFT JOIN GIAYTORN ON HV_GIAYTORN.MaLoai = GIAYTORN.MaLoai \
+                            LEFT JOIN DSDANGKY ON HV_GIAYTORN.STTDaDuyet = DSDANGKY.STT \
+                            LEFT JOIN HOCVIEN ON DSDANGKY.MaHV = HOCVIEN.MaHV \
+                            LEFT JOIN PERSON ON PERSON.PersonID = HOCVIEN.PERSONID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.DonViID \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN LOP ON LOP.MaLop = DONVI.MaLop \
+                            WHERE TG_VAO = "" OR TG_Vao IS NULL AND\
+                            PERSON.DonViID IN (SELECT DonViID FROM DONVI WHERE DONVI.MaLop = %s OR DONVI.MaDaiDoi= %s OR DONVI.MaTieuDoan =%s) \
+                            ORDER BY TG_Ra DESC,DONVI.MaLop,DONVI.MaDaiDoi,DONVI.MaTieuDoan'
+            obj = generics_cursor.getDictFromQuery(
+                query_string, [donViID,donViID,donViID], page=page, size=size)
             if obj is None:
                 return Response(data={}, status=status.HTTP_204_NO_CONTENT)
         except:
