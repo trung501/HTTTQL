@@ -39,6 +39,7 @@ function TableListAdmin() {
 
   useEffect(() => {
     async function getDSRV() {
+      console.log("thêm dsrv");
       const day = selectedDateBD.getDate();
       const month = selectedDateBD.getMonth() + 1;
       const year = selectedDateBD.getFullYear();
@@ -48,7 +49,8 @@ function TableListAdmin() {
       const dateStringBD = `${year}-${month}-${day}`;
       const dateStringKT = `${yearKT}-${monthKT}-${dayKT}`;
       const res = await axiosClient.get(
-        `/VeBinh/get-list-danh-sach-vao-ra-cong/?page=0&size=12&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
+        // `/VeBinh/get-list-danh-sach-vao-ra-cong/?page=1&size=12&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
+        `/VeBinh/get-list-danh-sach-vao-ra-cong-theo-don-vi/?page=1&size=12&donViID=${id}&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
       );
       console.log(res)
       setlistDSRV((listDSRV) => [...res.data]);

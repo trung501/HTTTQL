@@ -32,6 +32,8 @@ function Slidenav() {
   const [color, setColor] = React.useState("black");
   const [hasImage, setHasImage] = React.useState(true);
   const [id,setId] = useState()
+  const [roleID,setRoleId] = useState()
+  const [MaDV,setMADV] = useState()
   const location = useLocation();
   const mainPanel = React.useRef(null);
   const getRoutes = (routes) => {
@@ -59,7 +61,7 @@ function Slidenav() {
     }
   }, [location]);
   return (
-    <GlobalState.Provider value={{id,setId}}>
+    <GlobalState.Provider value={{id,setId,roleID,setRoleId,MaDV,setMADV}}>
       <div className="wrapper">
         <Sidebar color={color} image={hasImage ? image : ""} routes={routes} />
         <div className="main-panel" ref={mainPanel}>

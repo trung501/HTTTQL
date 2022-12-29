@@ -14,7 +14,10 @@ function SignIn(){
     axios.post('http://117.4.247.68:15333/authenticator/login/',data).then(res=>{
       console.log(res)
       localStorage.setItem("token","HTTTQL "+res.data.access)
-      history.push('/admin/dashboard')
+      history.push({
+        pathname:'/admin/dashboard',
+        refresh:true
+      })
     })
    }
     return(
@@ -41,7 +44,6 @@ function SignIn(){
             type="password"
             
             className="form-control password"
-            placeholder="Enter password"
             onChange={e=>setPassword(e.target.value)}
           />
         </div>
@@ -52,9 +54,9 @@ function SignIn(){
           </button>
         </div>
         </div>
-        <p className="forgot-password text-right">
+        {/* <p className="forgot-password text-right">
           Create <Link to="/signup">Account</Link>
-        </p>
+        </p> */}
 
       </form>
     </div>

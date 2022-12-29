@@ -58,7 +58,7 @@ function Header() {
       setId(id)
       setTenDv(name)
      }
-    
+   console.log(dv) 
 
   
   const mobileSidebarToggle = (e) => {

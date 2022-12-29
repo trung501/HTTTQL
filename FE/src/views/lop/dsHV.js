@@ -10,6 +10,7 @@ import "../../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+
 // react-bootstrap components
 import {
   Badge,
@@ -25,7 +26,7 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const { id, setId } = useContext(GlobalState);
+  const { id, setId,MADV } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [hoTen, setHoTen] = useState();
   const [loaiHV, setLoaiHV] = useState();
@@ -62,13 +63,13 @@ function TableListAdmin() {
   useEffect(() => {
     async function getItem() {
       const res = await axiosClient.get(
-        `/Person/get-list-hoc-vien/?page=0&size=12&donViID=${id}`
+        `/Person/get-list-hoc-vien/?page=0&size=12&donViID=${MADV}`
       );
       console.log(res);
       setlistHV((listHV) => [...res.data]);
     }
     getItem();
-  }, [id]);
+  }, [MADV]);
 
   const handleAddDSDK = (e, maHV) => {
     console.log("thêm");

@@ -28,46 +28,61 @@ function TableListAdmin() {
   const { id, setId } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [STT, setSTT] = useState();
-  const [xetDuyet, setXetDuyet] = useState();
+  const [liDo, setLiDo] = useState();
   const [maLoai, setMaLoai] = useState();
   const [soVe, setSoVe] = useState()
-  const [listDSDD, setlistDSDD] = useState([]);
+  const [listDSVP, setlistDSVP] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
+  const [TGRa, setTGRa] = useState(new Date());
+  const [TGVao, setTGVao] = useState(new Date());
 
   const handleChange = (date) => {
     setSelectedDate(date);
   };
+  const handleTimeVao = (date) => {
+    setTGVao(date);
+  };
+  const handleTimeRa = (date) => {
+    setTGRa(date);
+  };
 
   useEffect(() => {
-    async function getDSDD() {
+    async function getDSVP() {
       const day = selectedDate.getDate();
       const month = selectedDate.getMonth() + 1;
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-danh-sach-duoc-duyet/?donViID=${id}&timeBetween=${dateString}`
+        "/VeBinh/get-list-loi-vi-pham-/?page=1&size=12"
       );
       console.log(res)
-      setlistDSDD((listDSDD) => [...res.data]);
+      setlistDSVP((listDSVP) => [...res.data]);
     }
-    getDSDD();
+    getDSVP();
   }, [id, selectedDate]);
-  function handleAddGTRN(STT, maLoai){
+  function handleAddQDCT(MaHV){
     setShowModal(true);
-    setSTT(STT);
-    setMaLoai(maLoai);
+    setmaHV(MaHV);
   }
-  function handleAddGTRN1(){
-
+  function handleAddQDCT1(){
+    const ngayRa = TGRa.getDate();
+    const thangRa = TGRa.getMonth() + 1;
+    const namRa = TGRa.getFullYear();
+    const ngayVao = TGVao.getDate();
+    const thangVao = TGVao.getMonth() + 1;
+    const namVao = TGVao.getFullYear();
+    const timeRa = `${ngayRa}-${thangRa}-${namRa}`;
+    const timeVao = `${ngayVao}-${thangVao}-${namVao}`;
     const data ={
-      ma_loai: maLoai,
-      stt_da_duyet: STT,
-      so_ve: soVe
+      reason: liDo,
+      time_start: timeRa,
+      time_end: timeVao,
+      ma_HV: maHV
     }
-    axiosClient.post("/Person/post-tao-giay-to-RN-hoc-vien/", data).then((res)=>{
+    axiosClient.post("/Person/post-them-hoc-vien-cam-trai/", data).then((res)=>{
       if (res.status === 200) {
         alert("Thêm thành công");
         getDSDK()
@@ -76,27 +91,6 @@ function TableListAdmin() {
       }
     })
     setShowModal(false);
-  }
-
-  function getTrangThai(TRANGTHAIXD) {
-    switch (TRANGTHAIXD) {
-      case 0:
-        return "Chưa xét duyệt";
-      case 1:
-        return "Đại đội đã xét duyệt";
-      case 2:
-        return "Tiểu đoàn đã xét duyệt";
-      case 3:
-      case 4:
-      case 5:
-        return "Học viện đã xét duyệt";
-      case -1:
-      case -2:
-      case -3:
-        return "Không được duyệt";
-      default:
-        return "Không xác định";
-    }
   }
 
   return (
@@ -113,22 +107,47 @@ function TableListAdmin() {
           <Form>
 
             <div class="form-group">
-              <label>Số vé</label>
+              <label>Lí do</label>
               <input
                 className="form-control url"
-                value={soVe}
-                onChange={(e) => setSoVe(e.target.value)}
+                value={liDo}
+                onChange={(e) => setLiDo(e.target.value)}
               />
             </div>
+            <div class="form-group">
+              <label>Thời gian bắt đầu</label>
+                <DatePicker
+                  dateFormat="dd/MM/yyyy"
+                  selected={TGRa}
+                  onChange={handleTimeRa}
+                />
+            </div>
+            <div class="form-group">
+              <label>Thời gian kết thúc</label>
+                <DatePicker
+                  dateFormat="dd/MM/yyyy"
+                  selected={TGVao}
+                  onChange={handleTimeVao}
+                />
+            </div>
+            <div class="form-group">
+              <label>Mã học viên</label>
+              <input
+                className="form-control url"
+                value={maHV}
+                onChange={(e) => setLiDo(e.target.value)}
+              />
+            </div>
+
           </Form>
         </Modal.Body>
         <Modal.Footer>
         <Button
             variant="secondary"
-            onClick={handleAddGTRN1}
+            onClick={handleAddQDCT1}
             className="btn-table btn-left"
           >
-            Thêm giấy tờ
+            Thêm DSCT
           </Button>
           <Button onClick={handleClose} variant="secondary" type="submit">
             Hủy
@@ -140,7 +159,7 @@ function TableListAdmin() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Col md="3">
+                {/* <Col md="3">
                   <div style={{ display: "flex", gap: 12 }}>
                   <p>Ngày trong tuần</p>
                   <DatePicker
@@ -150,44 +169,42 @@ function TableListAdmin() {
                   />
                   </div>
                   
-                </Col>
+                </Col> */}
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
                   <thead>
                     <tr>
                       <th className="border-0">STT</th>
-                      <th className="border-0">Hình thức ra ngoài</th>
-                      <th className="border-0">Địa điểm</th>
-                      <th className="border-0">Thời gian đi</th>
-                      <th className="border-0">Thời gian về</th>
+                      <th className="border-0">STT ra ngoài</th>
                       <th className="border-0">Mã học viên</th>
                       <th className="border-0">Họ tên</th>
-                      <th className="border-0">Trạng thái</th>
-                      <th className="border-0">Thao tác</th>
+                      <th className="border-0">Tiểu đoàn</th>
+                      <th className="border-0">Đại đội</th>
+                      <th className="border-0">Lớp</th>
+                      <th className="border-0">Lỗi</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {listDSDD &&
-                      listDSDD.map((item) => {
+                    {listDSVP &&
+                      listDSVP.map((item) => {
                         return (
                           <tr key={item.STT}>
                             <td>{item.STT}</td>
-                            <td>{item.HinhThucRN}</td>
-                            <td>{item.DiaDiem}</td>
-                            <td>{item.ThoiGianDi}</td>
-                            <td>{item.ThoiGianVe}</td>
+                            <td>{item.STTRaNgoai}</td>
                             <td>{item.MaHV}</td>
                             <td>{item.HoTen}</td>
-                            <td>{getTrangThai(item.TRANGTHAIXD)}</td>
+                            <td>{item.TenTD}</td>
+                            <td>{item.TenDD}</td>
+                            <td>{item.TenLop}</td>
+                            <td>{item.TenLoi}</td>
                             <td>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
                                 onClick={(e) => 
-                                  handleAddGTRN(
-                                     item.STT,
-                                     (item.HinhThucRN==="Tranh thủ"?0:1)
+                                  handleAddQDCT(
+                                     item.MaHV
                                   )}
                               >
                                 Thêm QDCT
