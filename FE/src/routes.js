@@ -25,6 +25,7 @@ import dsHV from "views/dsHV.js";
 import dsRV from "views/dsRV.js";
 import kqrl from "views/kqrl.js";
 import dsVP from "views/dsVP.js";
+import dsDRN from "views/dsDRN.js";
 import ttk from "views/ttk.js";
 
 
@@ -76,7 +77,13 @@ const dashboardRoutes = [
   {
     path: "/dsRV",
     name: "Danh sách ra vào",
-    component: dsHV,
+    component: dsRV,
+    layout: "/admin"
+  },
+  {
+    path: "/dsDRN",
+    name: "Danh sách đang ra ngoài",
+    component: dsDRN,
     layout: "/admin"
   },
   {

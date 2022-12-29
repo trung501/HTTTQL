@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import "../assets/css/btn_vul.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 // react-bootstrap components
 import {
   Badge,
@@ -400,6 +401,14 @@ function TableListAdmin() {
                               >
                                 Thêm DSDK
                               </Button>
+                              <Link to={`/admin/kqrl?maHV=${item.MaHV}`}> 
+                              <Button type="button" 
+                              className="btn-table btn-left" 
+                              > 
+                              KQRL
+                              </Button>
+                            </Link>
+                             
                             </td>
                             {/* <td>
                               <Button type="button" onClick={()=>goDetail()}>
@@ -424,5 +433,4 @@ function TableListAdmin() {
     </>
   );
 }
-
 export default TableListAdmin;
