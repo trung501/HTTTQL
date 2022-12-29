@@ -50,7 +50,7 @@ function TableListAdmin() {
       const dateStringKT = `${yearKT}-${monthKT}-${dayKT}`;
       const res = await axiosClient.get(
         // `/VeBinh/get-list-danh-sach-vao-ra-cong/?page=1&size=12&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
-        `/VeBinh/get-list-danh-sach-vao-ra-cong-theo-don-vi/?page=1&size=12&donViID=${id}&timeStart=${dateStringBD}&timeEnd=${dateStringKT}`
+        `/VeBinh/get-list-danh-sach-vao-ra-cong-theo-don-vi/?page=1&size=12&donViID=${id}&timeStart=${dateStringBD}&timeEnd={dateStringKT}`
       );
       console.log(res)
       setlistDSRV((listDSRV) => [...res.data]);

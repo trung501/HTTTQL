@@ -27,7 +27,7 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const { id, setId } = useContext(GlobalState);
+  const { id, setId, MaDV } = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [STT, setSTT] = useState();
   const [HTRN, setHTRN] = useState(0);
@@ -63,12 +63,12 @@ function TableListAdmin() {
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-dang-ky/?donViID=${id}&timeBetween=${dateString}`
+        `/Person/get-list-dang-ky/?donViID=${MaDV}&timeBetween=${dateString}`
       );
       setlistDSDK((listDSDK) => [...res.data]);
     }
     getDSDK();
-  }, [id, selectedDate]);
+  }, [MaDV]);
   function getMaHVShow(maHv) {
     setShow(true);
     setmaHV(maHV);

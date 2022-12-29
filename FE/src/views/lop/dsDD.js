@@ -25,7 +25,7 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const { id, setId } = useContext(GlobalState);
+  const { id, setId , MaDV} = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [STT, setSTT] = useState();
   const [xetDuyet, setXetDuyet] = useState();
@@ -48,13 +48,13 @@ function TableListAdmin() {
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-danh-sach-duoc-duyet/?donViID=${id}&timeBetween=${dateString}`
+        `/Person/get-list-danh-sach-duoc-duyet/?donViID=${MaDV}&timeBetween=${dateString}`
       );
       console.log(res)
       setlistDSDD((listDSDD) => [...res.data]);
     }
     getDSDD();
-  }, [id, selectedDate]);
+  }, [MaDV]);
   function handleAddGTRN(STT, maLoai){
     setShowModal(true);
     setSTT(STT);

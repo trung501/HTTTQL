@@ -63,11 +63,10 @@ function TableListAdmin() {
     }
     getDSVP();
   }, [id, selectedDate]);
-  function handleAddQDCT(MaHV){
+  function handleAddDSVP(){
     setShowModal(true);
-    setmaHV(MaHV);
   }
-  function handleAddQDCT1(){
+  function handleAddDSVP1(){
     const ngayRa = TGRa.getDate();
     const thangRa = TGRa.getMonth() + 1;
     const namRa = TGRa.getFullYear();
@@ -144,10 +143,10 @@ function TableListAdmin() {
         <Modal.Footer>
         <Button
             variant="secondary"
-            onClick={handleAddQDCT1}
+            onClick={handleAddDSVP1}
             className="btn-table btn-left"
           >
-            Thêm DSCT
+            Thêm DSVP
           </Button>
           <Button onClick={handleClose} variant="secondary" type="submit">
             Hủy
@@ -170,6 +169,13 @@ function TableListAdmin() {
                   </div>
                   
                 </Col> */}
+                 <button
+                  type="button"
+                  class="btn btn-add-target  btn-table btn-left"
+                  onClick={handleAddDSVP}
+                >
+                  THÊM MỚI
+                </button>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
                 <Table className="table-hover table-striped">
@@ -198,7 +204,7 @@ function TableListAdmin() {
                             <td>{item.TenDD}</td>
                             <td>{item.TenLop}</td>
                             <td>{item.TenLoi}</td>
-                            <td>
+                            {/* <td>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
@@ -208,7 +214,7 @@ function TableListAdmin() {
                                   )}
                               >
                                 Thêm QDCT
-                              </Button></td>
+                              </Button></td> */}
                           </tr>
                         );
                       })}
