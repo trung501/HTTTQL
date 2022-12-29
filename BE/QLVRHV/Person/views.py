@@ -301,7 +301,37 @@ class PersonViewSet(viewsets.ViewSet):
         API này dùng để lấy quyền truy cập ( roleID) của user hiện tại).
         """
         roleId = request.user.roleID
-        return Response({"permission": int(roleId)}, status=status.HTTP_200_OK)
+        username= request.user.username
+        try:
+            query_string = f"SELECT DONVI.MaLop,LOP.TenLop, DONVI.MaDaiDoi,DAIDOI.TenDD,DONVI.MaTieuDoan,TIEUDOAN.TenTD FROM PERSON \
+                            INNER JOIN Account_user ON Account_user.personID = PERSON.PersonID \
+                            LEFT JOIN DONVI ON DONVI.DonViID = PERSON.PersonID \
+                            LEFT JOIN LOP ON LOP.MaLop= DONVI.MaLop \
+                            LEFT JOIN DAIDOI ON DAIDOI.MaDD = DONVI.MaDaiDoi \
+                            LEFT JOIN TIEUDOAN ON TIEUDOAN.MaTD = DONVI.MaTieuDoan \
+                            WHERE username= %s "
+            info_donvi = generics_cursor.getDictFromQuery( query_string, [username])
+            if info_donvi is None or len(info_donvi) == 0:
+                return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+            info_donvi=info_donvi[0]
+        except:
+            return Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if roleId == CLASS_ROLE:
+            code = info_donvi.get('MaLop')
+            name=info_donvi.get('TenLop')
+        elif roleId == COMPANY_ROLE:
+            code = info_donvi.get('MaDaiDoi')
+            name=info_donvi.get('TenDD')
+        elif roleId == BATTALION_ROLE:
+            code = info_donvi.get('TD01')
+            name=info_donvi.get('TenTD')
+        elif roleId >= GUARDSMAN_ROLE:
+            code = "HV"
+            name="Học viện kỹ thuật quân sự"
+        else:
+            code = ""
+            name=""
+        return Response({"permission": int(roleId),"code":code,"name":name}, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(method='get', manual_parameters=[sw_MaHV, sw_TimeStart], responses=get_list_person_response)
     @action(methods=['GET'], detail=False, url_path='get-check-cam-trai')
