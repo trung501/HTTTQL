@@ -102,7 +102,7 @@ function TableListAdmin() {
                       <th className="border-0">Mã học viên</th>
                       <th className="border-0">Họ tên</th>
                       <th className="border-0">Lớp</th>
-                      <th className="border-0">Thao tác</th>
+                      {/* <th className="border-0">Thao tác</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -117,7 +117,7 @@ function TableListAdmin() {
                             <td>{item.MaHV}</td>
                             <td>{item.HoTen}</td>
                             <td>{item.TenLop}</td>
-                            <td>
+                            {/* <td>
                             <Button
                                 type="button"
                                 className="btn-table btn-left"
@@ -125,7 +125,7 @@ function TableListAdmin() {
                               >
                                 Xóa
                               </Button>
-                            </td>
+                            </td> */}
                           </tr>
                         );
                       })}

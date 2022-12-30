@@ -24,7 +24,7 @@ import {
 } from "react-bootstrap";
 
 function TableListAdmin() {
-  const { id, setId } = useContext(GlobalState);
+  const { id, setId , MaDV} = useContext(GlobalState);
   const [maHV, setmaHV] = useState();
   const [STT, setSTT] = useState();
   const [kDuyet, setKDuyet] = useState();
@@ -42,13 +42,13 @@ function TableListAdmin() {
       const year = selectedDate.getFullYear();
       const dateString = `${day}-${month}-${year}`;
       const res = await axiosClient.get(
-        `/Person/get-list-danh-sach-khong-duoc-duyet/?donViID=${id}&timeBetween=${dateString}`
+        `/Person/get-list-danh-sach-khong-duoc-duyet/?donViID=${MaDV}&timeBetween=${dateString}`
       );
       console.log(res)
       setlistDSKD((listDSKD) => [...res.data]);
     }
     getDSKD();
-  }, [id, selectedDate]);
+  }, [MaDV]);
 
   function getTrangThai(TRANGTHAIXD) {
     switch (TRANGTHAIXD) {
