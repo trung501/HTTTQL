@@ -82,7 +82,7 @@ function TableListAdmin() {
   }
  }
  const handleDuyet = (event,STT) => {
-  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[6];
+  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[7];
   console.log(tag);
 
 
@@ -105,7 +105,7 @@ function TableListAdmin() {
   });
 };
 const handleKhongDuyet = (event,STT) => {
-  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[6];
+  const tag = event.target.parentNode.parentNode.getElementsByTagName('td')[7];
   console.log(tag);
   console.log(STT)
   setXetDuyet(-1)
