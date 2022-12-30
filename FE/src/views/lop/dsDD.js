@@ -164,7 +164,7 @@ function TableListAdmin() {
                       <th className="border-0">Mã học viên</th>
                       <th className="border-0">Họ tên</th>
                       <th className="border-0">Trạng thái</th>
-                      <th className="border-0">Thao tác</th>
+                      {/* <th className="border-0">Thao tác</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -180,7 +180,7 @@ function TableListAdmin() {
                             <td>{item.MaHV}</td>
                             <td>{item.HoTen}</td>
                             <td>{getTrangThai(item.TRANGTHAIXD)}</td>
-                            <td>
+                            {/* <td>
                               <Button
                                 type="button"
                                 className="btn-table btn-left"
@@ -191,7 +191,7 @@ function TableListAdmin() {
                                   )}
                               >
                                 Thêm GTRN
-                              </Button></td>
+                              </Button></td> */}
                           </tr>
                         );
                       })}
